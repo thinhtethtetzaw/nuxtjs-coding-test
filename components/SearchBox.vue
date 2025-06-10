@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 
 const props = defineProps({
   modelValue: {
@@ -61,6 +61,16 @@ const suggestions = ref([]);
 const isLoading = ref(false);
 const showPopover = ref(false);
 let debounceTimeout = null;
+
+const searchQuery = ref("");
+
+const { data, execute } = useLazyApi(
+  "/api/hotels/search",
+  {
+    method: "POST",
+  },
+  computed(() => ({ search: searchQuery.value }))
+);
 
 const handleInput = (event) => {
   emit("update:modelValue", event.target.value);
@@ -93,11 +103,9 @@ const fetchSuggestions = async (query) => {
   }
   isLoading.value = true;
   try {
-    const res = await $fetch("/api/hotels/search", {
-      method: "POST",
-      body: { search: query },
-    });
-    suggestions.value = res.data || [];
+    searchQuery.value = query;
+    await execute();
+    suggestions.value = data.value?.data || [];
     showPopover.value = suggestions.value.length > 0;
   } catch (e) {
     suggestions.value = [];

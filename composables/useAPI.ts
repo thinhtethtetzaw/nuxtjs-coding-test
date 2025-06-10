@@ -29,9 +29,10 @@ export const useApi: typeof useFetch = (url, options) => {
  * Custom hook to fetch data lazily from the API using custom api instance.
  * @param url - The URL to fetch data from.
  * @param options - `useFetch` options.
+ * @param body - The payload body for POST/PUT/PATCH requests.
  * @returns - `useFetch` hook.
  */
-export const useLazyApi: typeof useFetch = (url, options) => {
+export const useLazyApi: typeof useFetch = (url, options, body?: any) => {
   const method = String(options?.method ?? "get").toLowerCase();
   const notGetRequest = method !== "get";
   const isImmediateDisabled = notGetRequest && !options?.immediate;
@@ -44,6 +45,7 @@ export const useLazyApi: typeof useFetch = (url, options) => {
     lazy: true,
     $fetch: useNuxtApp().$api,
     method: options?.method ?? "get",
+    body: body,
     immediate: isImmediateDisabled ? false : options?.immediate,
     watch: isWatchDisabled ? false : options?.watch,
   }) as typeof options;

@@ -2,6 +2,6 @@
 
 @layer base {
   body {
-    @apply bg-white text-sm;
+    @apply text-sm;
   }
 }

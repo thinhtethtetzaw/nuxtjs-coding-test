@@ -2,6 +2,6 @@
 
 @layer base {
   body {
-    @apply text-sm;
+    @apply text-sm px-20 py-10;
   }
 }

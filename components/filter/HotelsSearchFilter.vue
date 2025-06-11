@@ -24,7 +24,7 @@
 <script setup>
 import { reactive, watch, computed } from "vue"
 import HotelsFilterResults from "~/components/filter/HotelsFilterResults.vue"
-import Loading from "~/components/common/Loading.vue"
+import SpinnerLoading from "~/components/common/SpinnerLoading.vue"
 
 const props = defineProps({
 	modelValue: {

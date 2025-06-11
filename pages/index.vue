@@ -38,25 +38,49 @@
 
 		<!-- Hotel List -->
 		<div class="mx-auto mt-32 grid grid-cols-12 gap-6">
-			<div class="col-span-4">
-				<h2 class="mb-4 text-2xl font-bold">Filter By:</h2>
-				<div class="flex flex-col gap-2">
-					<div class="flex items-center gap-2">
-						<input type="checkbox" id="filter-by-price" />
-						<label for="filter-by-price">Price</label>
-					</div>
+			<div class="col-span-3">
+				<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
+				<div v-if="isHotelsLoading">
+					<SkeletonLoading />
+				</div>
+				<div v-else class="flex flex-col gap-6">
+					<PriceRangeFilter v-model="filters" />
+					<AmenitiesFilter
+						v-model="filters.selectedAmenities"
+						:amenities="availableAmenities"
+					/>
 				</div>
 			</div>
-			<div class="col-span-8">
-				<Loading :is-loading="isHotelsLoading" />
-				<div v-if="error" class="py-8 text-center">
+			<div class="col-span-9 px-4">
+				<div v-if="error" class="text-center">
 					{{ error.message || "Failed to load hotels" }}
+				</div>
+				<div
+					v-if="isHotelsLoading"
+					class="flex items-center justify-center py-10"
+				>
+					<SpinnerLoading :is-loading="isHotelsLoading" />
 				</div>
 				<div v-if="!isHotelsLoading">
 					<h2 class="mb-4 text-2xl font-bold">Discover Our Collection</h2>
-					<div class="grid grid-cols-3 gap-6">
+					<div
+						v-if="filteredHotels.data.length === 0"
+						class="flex flex-col items-center justify-center rounded-2xl bg-gray-50 p-12 text-center"
+					>
+						<div class="mb-4 rounded-full bg-gray-100 p-4">
+							<HotelIcon color="gray" :size="32" />
+						</div>
+						<h3 class="mb-2 text-xl font-semibold text-gray-800">
+							No Hotels Found
+						</h3>
+						<p class="mb-4 text-gray-600">
+							We couldn't find any hotels matching your criteria. <br />Try
+							adjusting your filters or search for a different location.
+						</p>
+					</div>
+					<div v-else class="grid grid-cols-3 gap-6">
 						<HotelCard
-							v-for="hotel in hotels.data"
+							v-for="hotel in filteredHotels.data"
 							:key="hotel.id || hotel.slug"
 							:hotel="hotel"
 							@book-now="onHotelBook"
@@ -69,12 +93,38 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
-import HotelCard from "~/components/hotel/HotelCard.vue"
-import HotelsSearchFilter from "~/components/filter/HotelsSearchFilter.vue"
-import Loading from "~/components/common/Loading.vue"
+import { ref, computed } from "vue"
+import { HotelCard } from "~/components/hotel"
+import { HotelsSearchFilter } from "~/components/filter"
+import { PriceRangeFilter, AmenitiesFilter } from "~/components/filter"
+import { SpinnerLoading, SkeletonLoading } from "~/components/common"
+import { HotelIcon } from "lucide-vue-next"
 
 const searchQuery = ref("")
+const filters = ref({
+	priceMin: null,
+	priceMax: null,
+	selectedAmenities: [],
+})
+
+const availableAmenities = computed(() => {
+	if (!hotels.value?.data) return []
+
+	const amenitiesMap = new Map()
+
+	hotels.value.data.forEach((hotel) => {
+		hotel.amenities?.forEach((amenity) => {
+			// Use amenity ID as key to prevent duplicates
+			if (!amenitiesMap.has(amenity.id)) {
+				amenitiesMap.set(amenity.id, amenity)
+			}
+		})
+	})
+
+	return Array.from(amenitiesMap.values()).sort((a, b) =>
+		a.name.localeCompare(b.name),
+	)
+})
 
 const {
 	data: hotels,
@@ -85,6 +135,34 @@ const {
 	immediate: true,
 	watch: false,
 	server: false,
+})
+
+const filteredHotels = computed(() => {
+	if (!hotels.value?.data) return { data: [] }
+
+	return {
+		data: hotels.value.data.filter((hotel) => {
+			// Price filter
+			if (filters.value.priceMin && hotel.avg_price < filters.value.priceMin)
+				return false
+			if (filters.value.priceMax && hotel.avg_price > filters.value.priceMax)
+				return false
+
+			// Amenities filter
+			if (filters.value.selectedAmenities.length > 0) {
+				const hotelAmenityIds = new Set(hotel.amenities?.map((a) => a.id) || [])
+				if (
+					!filters.value.selectedAmenities.every((id) =>
+						hotelAmenityIds.has(id),
+					)
+				) {
+					return false
+				}
+			}
+
+			return true
+		}),
+	}
 })
 
 const onHotelSelect = (selectedHotel) => {

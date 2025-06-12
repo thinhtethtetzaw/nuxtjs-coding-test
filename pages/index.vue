@@ -18,11 +18,7 @@
 						From luxury retreats to cozy hideaways,<br />
 						we help you find the perfect place to create lasting memories
 					</p>
-					<button
-						class="bg-primary cursor-pointer rounded-full px-6 py-2.5 text-base font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 hover:from-blue-600 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none active:scale-100"
-					>
-						Explore
-					</button>
+					<Button variant="primary" size="md" roundedFull> Explore </Button>
 				</div>
 			</div>
 			<div
@@ -101,6 +97,7 @@ import { HotelsSearchFilter } from "~/components/filter"
 import { PriceRangeFilter, AmenitiesFilter } from "~/components/filter"
 import { SpinnerLoading, SkeletonLoading } from "~/components/common"
 import { HotelIcon } from "lucide-vue-next"
+import Button from "~/components/common/Button.vue"
 
 const searchQuery = ref("")
 const filters = ref({
@@ -132,11 +129,12 @@ const {
 	data: hotels,
 	pending: isHotelsLoading,
 	error,
-} = await useApi("/api/hotels", {
+} = useApi("/api/hotels", {
 	method: "POST",
+	key: "hotels-list",
+	cache: true,
 	immediate: true,
 	watch: false,
-	server: false,
 })
 
 const filteredHotels = computed(() => {

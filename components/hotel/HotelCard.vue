@@ -17,7 +17,7 @@
 			</h2>
 			<div class="mt-4 flex items-center justify-between gap-2 text-gray-700">
 				<span class="text-sm text-gray-700">
-					Price: ${{ hotel.avg_price }}
+					Avg. Price: ${{ hotel.avg_price }}
 				</span>
 				<span class="mx-2 text-gray-300">|</span>
 				<div class="flex items-center gap-1">
@@ -41,6 +41,7 @@
 				</div>
 			</div>
 			<button
+				@click="navigateTo(`/hotels/${hotel.slug}`)"
 				class="bg-primary mt-2 cursor-pointer rounded-full px-4 py-2 text-white transition-all duration-200 hover:scale-105"
 			>
 				View Details

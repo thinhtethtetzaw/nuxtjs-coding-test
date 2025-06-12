@@ -19,7 +19,7 @@
 						we help you find the perfect place to create lasting memories
 					</p>
 					<button
-						class="rounded-lg bg-blue-500 px-6 py-2 font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 hover:from-blue-600 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none active:scale-100"
+						class="bg-primary cursor-pointer rounded-full px-6 py-2.5 text-base font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 hover:from-blue-600 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none active:scale-100"
 					>
 						Explore
 					</button>
@@ -37,18 +37,20 @@
 		</div>
 
 		<!-- Hotel List -->
-		<div class="mx-auto mt-32 grid grid-cols-12 gap-6">
+		<div class="mx-auto mt-36 grid grid-cols-12 gap-6">
 			<div class="col-span-3">
-				<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
-				<div v-if="isHotelsLoading">
-					<SkeletonLoading />
-				</div>
-				<div v-else class="flex flex-col gap-6">
-					<PriceRangeFilter v-model="filters" />
-					<AmenitiesFilter
-						v-model="filters.selectedAmenities"
-						:amenities="availableAmenities"
-					/>
+				<div class="sticky top-6">
+					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
+					<div v-if="isHotelsLoading">
+						<SkeletonLoading />
+					</div>
+					<div v-else class="flex flex-col gap-6">
+						<PriceRangeFilter v-model="filters" />
+						<AmenitiesFilter
+							v-model="filters.selectedAmenities"
+							:amenities="availableAmenities"
+						/>
+					</div>
 				</div>
 			</div>
 			<div class="col-span-9 px-4">
@@ -78,7 +80,7 @@
 							adjusting your filters or search for a different location.
 						</p>
 					</div>
-					<div v-else class="grid grid-cols-3 gap-6">
+					<div v-else class="grid grid-cols-3 gap-4">
 						<HotelCard
 							v-for="hotel in filteredHotels.data"
 							:key="hotel.id || hotel.slug"

@@ -78,12 +78,12 @@ const buttonClasses = computed(() => {
 		],
 		outline: [
 			"border-[1.5px]",
-			"border-gray-300",
+			"border-gray-200",
 			"text-gray-600",
 			"bg-transparent",
 			"hover:bg-gray-100",
 		],
-		ghost: ["text-primary", "bg-transparent", "focus:outline-none", "!p-0"],
+		ghost: ["text-primary", "bg-transparent", "focus:outline-none"],
 		danger: [
 			"bg-red-600",
 			"text-white",

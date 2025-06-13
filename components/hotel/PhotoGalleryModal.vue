@@ -18,7 +18,7 @@
 						<h2 class="text-2xl font-semibold">{{ hotelName }}</h2>
 						<p class="text-gray-500">{{ images?.length || 0 }} Photos</p>
 					</div>
-					<CommonButton variant="ghost" @click="$emit('close')">
+					<CommonButton variant="ghost" @click="$emit('close')" class="!p-0">
 						<XIcon class="size-5 text-gray-700" />
 					</CommonButton>
 				</div>

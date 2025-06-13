@@ -1,5 +1,8 @@
 <template>
-	<div class="relative h-96 overflow-hidden rounded-xl border border-gray-200">
+	<div
+		v-if="latitude && longitude"
+		class="relative h-96 overflow-hidden rounded-xl border border-gray-200"
+	>
 		<!-- Google Maps Embed -->
 		<iframe
 			:src="`https://maps.google.com/maps?q=${latitude},${longitude}&t=${mapType === 'satellite' ? 'k' : 'm'}&z=16&ie=UTF8&iwloc=&output=embed`"
@@ -46,6 +49,9 @@
 		>
 			<CommonSpinnerLoading :is-loading="true" />
 		</div>
+	</div>
+	<div v-else class="flex h-96 items-center justify-center text-gray-500">
+		Location not available
 	</div>
 </template>
 

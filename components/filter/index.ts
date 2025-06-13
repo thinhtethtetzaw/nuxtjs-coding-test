@@ -1,11 +1,11 @@
 import type { DefineComponent } from "vue"
 
-export { default as AmenitiesFilter } from "./AmenitiesFilter.vue"
+export { default as Amenities } from "./Amenities.vue"
 export { default as HotelsFilterResults } from "./HotelsFilterResults.vue"
-export { default as HotelsSearchFilter } from "./HotelsSearchFilter.vue"
-export { default as PriceRangeFilter } from "./PriceRangeFilter.vue"
+export { default as HotelsSearch } from "./HotelsSearch.vue"
+export { default as PriceRange } from "./PriceRange.vue"
 
-export type HotelsSearchFilterComponent = DefineComponent<{}, {}, any>
-export type HotelsFilterResultsComponent = DefineComponent<{}, {}, any>
-export type AmenitiesFilterComponent = DefineComponent<{}, {}, any>
-export type PriceRangeFilterComponent = DefineComponent<{}, {}, any>
+export type HotelsSearchComponent = DefineComponent<{}, {}, any>
+export type HotelsResultsComponent = DefineComponent<{}, {}, any>
+export type AmenitiesComponent = DefineComponent<{}, {}, any>
+export type PriceRangeComponent = DefineComponent<{}, {}, any>

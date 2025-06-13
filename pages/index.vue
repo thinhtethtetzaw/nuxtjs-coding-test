@@ -27,7 +27,7 @@
 				<div
 					class="flex w-full flex-col items-center rounded-2xl bg-white p-6 shadow-lg"
 				>
-					<HotelsSearchFilter v-model="searchQuery" @select="onHotelSelect" />
+					<FilterHotelsSearch v-model="searchQuery" @select="onHotelSelect" />
 				</div>
 			</div>
 		</div>
@@ -41,8 +41,8 @@
 						<SkeletonLoading />
 					</div>
 					<div v-else class="flex flex-col gap-6">
-						<PriceRangeFilter v-model="filters" />
-						<AmenitiesFilter
+						<FilterPriceRange v-model="filters" />
+						<FilterAmenities
 							v-model="filters.selectedAmenities"
 							:amenities="availableAmenities"
 						/>
@@ -93,8 +93,6 @@
 <script setup>
 import { ref, computed } from "vue"
 import { HotelCard } from "~/components/hotel"
-import { HotelsSearchFilter } from "~/components/filter"
-import { PriceRangeFilter, AmenitiesFilter } from "~/components/filter"
 import { SpinnerLoading, SkeletonLoading } from "~/components/common"
 import { HotelIcon } from "lucide-vue-next"
 import Button from "~/components/common/Button.vue"

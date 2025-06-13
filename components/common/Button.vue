@@ -61,9 +61,9 @@ const buttonClasses = computed(() => {
 	const sizeClasses = {
 		xs: ["px-2", "py-1", "text-xs"],
 		sm: ["px-3", "py-1.5", "text-sm"],
-		md: ["px-4", "py-2", "text-base"],
-		lg: ["px-6", "py-3", "text-lg"],
-		xl: ["px-8", "py-4", "text-xl"],
+		md: ["px-4", "py-2", "text-sm"],
+		lg: ["px-6", "py-3", "text-base"],
+		xl: ["px-8", "py-4", "text-lg"],
 	}
 
 	// Variant classes using primary color scheme
@@ -77,15 +77,13 @@ const buttonClasses = computed(() => {
 			"hover:shadow-lg",
 		],
 		outline: [
-			"border-2",
-			"border-primary",
-			"text-primary",
+			"border-[1.5px]",
+			"border-gray-300",
+			"text-gray-600",
 			"bg-transparent",
-			"hover:bg-primary/10",
-			"hover:text-white",
-			"focus:ring-primary",
+			"hover:bg-gray-100",
 		],
-		ghost: ["text-primary", "bg-transparent", "focus:outline-none"],
+		ghost: ["text-primary", "bg-transparent", "focus:outline-none", "!p-0"],
 		danger: [
 			"bg-red-600",
 			"text-white",

@@ -1,14 +1,18 @@
 <template>
-	<div class="min-h-screen">
-		<!-- Header Navigation -->
+	<div
+		v-if="isHotelDetailLoading"
+		class="flex h-96 items-center justify-center"
+	>
+		<CommonSpinnerLoading :is-loading="true" />
+	</div>
+	<div v-else class="min-h-screen">
 		<NuxtLink to="/" class="mb-5 flex items-center gap-2 text-gray-700">
 			<ChevronLeftIcon class="h-4 w-4" /> Back to Hotels
 		</NuxtLink>
 
-		<!-- Main Content -->
-		<div v-if="hotelData.hotel_name">
+		<div v-if="hotelData.hotel_name" class="space-y-6">
 			<!-- Hotel Header -->
-			<Card>
+			<CommonCard>
 				<div class="flex items-start justify-between">
 					<div class="flex-1">
 						<h1 class="mb-2 text-3xl font-semibold text-gray-700">
@@ -42,86 +46,44 @@
 						</div>
 					</div>
 				</div>
-			</Card>
+			</CommonCard>
 
-			<!-- Image Gallery -->
-			<div class="mb-6 rounded-xl bg-white p-6">
-				<div class="grid h-96 grid-cols-12 gap-4">
-					<!-- Main Image -->
-					<div class="col-span-6">
-						<img
-							:src="hotelData.gallery_all?.[0]?.url || '/placeholder-hotel.jpg'"
-							:alt="hotelData.hotel_name"
-							class="h-full w-full rounded-lg object-cover"
-						/>
-					</div>
-					<!-- Side Images -->
-					<div class="col-span-6 grid grid-cols-2 gap-4">
-						<img
-							v-for="(image, index) in hotelData.gallery_all?.slice(1, 4)"
-							:key="index"
-							:src="image.url"
-							:alt="hotelData.hotel_name"
-							class="h-full w-full rounded-lg object-cover"
-						/>
-						<!-- More Photos Overlay -->
-						<div class="relative">
-							<img
-								:src="
-									hotelData.gallery_all?.[4]?.url ||
-									hotelData.gallery_all?.[1]?.url
-								"
-								:alt="hotelData.hotel_name"
-								class="h-full w-full rounded-lg object-cover"
-							/>
-							<div
-								class="bg-opacity-60 absolute inset-0 flex items-center justify-center rounded-lg bg-black"
-							>
-								<div class="text-center text-white">
-									<span class="text-3xl font-bold"
-										>+
-										{{
-											Math.max(0, (hotelData.gallery_all?.length || 0) - 4)
-										}}</span
-									>
-									<p class="text-sm font-medium">Photos</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<HotelImageGallery
+				:images="hotelData.gallery_all"
+				:hotel-name="hotelData.hotel_name"
+				@open-gallery="togglePhotoGallery"
+			/>
 
-			<!-- Content Grid -->
 			<div class="grid grid-cols-12 gap-6">
 				<!-- Left Column -->
 				<div class="col-span-8 space-y-6">
-					<!-- Popular Amenities -->
-					<Card>
-						<h2 class="mb-6 text-xl font-semibold text-gray-900">
-							Popular Amenities
-						</h2>
+					<div>
+						<h2 class="mb-6 text-xl font-semibold text-gray-900">Facilities</h2>
 						<div class="grid grid-cols-3 gap-6">
 							<div
-								v-for="amenity in hotelData.amenities?.slice(0, 6)"
+								v-for="amenity in showAllAmenities
+									? hotelData.amenities
+									: hotelData.amenities?.slice(0, 6)"
 								:key="amenity.id"
 								class="flex items-center gap-3"
 							>
-								<div
-									class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100"
-								>
-									<span class="text-orange-600">🏨</span>
-								</div>
+								<CheckIcon class="text-primary size-4" />
 								<span class="text-sm text-gray-700">{{ amenity.name }}</span>
 							</div>
 						</div>
-						<button
+						<CommonButton
+							variant="ghost"
 							v-if="hotelData.amenities?.length > 6"
-							class="mt-6 font-medium text-orange-500 hover:text-orange-600"
+							@click="toggleAmenities"
+							class="text-primary mt-6 font-medium hover:text-blue-400"
 						>
-							View All Amenities
-						</button>
-					</Card>
+							{{
+								showAllAmenities
+									? "Show Less"
+									: `View All ${hotelData.amenities?.length} Amenities`
+							}}
+						</CommonButton>
+					</div>
 
 					<!-- Tabs Section -->
 					<div class="rounded-lg bg-white shadow-sm">
@@ -314,127 +276,46 @@
 
 				<!-- Right Column -->
 				<div class="col-span-4 space-y-4">
-					<!-- Location -->
+					<HotelMap
+						:latitude="hotelData.position?.latitude"
+						:longitude="hotelData.position?.longitude"
+					/>
 
-					<!-- Modern Map Container -->
-					<div
-						class="relative h-56 overflow-hidden rounded-xl border border-gray-200"
-					>
-						<!-- Google Maps Embed -->
-						<iframe
-							:src="`https://maps.google.com/maps?q=${hotelData.position?.latitude},${hotelData.position?.longitude}&t=${mapType === 'satellite' ? 'k' : 'm'}&z=16&ie=UTF8&iwloc=&output=embed`"
-							class="relative z-10 h-full w-full rounded-xl border-0"
-							loading="lazy"
-							referrerpolicy="no-referrer-when-downgrade"
-							style="filter: contrast(1.1) saturate(1.2)"
-							@load="mapLoaded = true"
-						>
-						</iframe>
-
-						<!-- Modern Map Controls -->
-						<div class="absolute bottom-6 left-6 z-40">
-							<div class="flex flex-col gap-2">
-								<!-- Zoom In -->
-								<button
-									class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200/50 bg-white/90 shadow-lg backdrop-blur-sm transition-colors duration-200 hover:bg-white"
-								>
-									<svg
-										class="h-4 w-4 text-gray-700"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-										/>
-									</svg>
-								</button>
-								<!-- Zoom Out -->
-								<button
-									class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200/50 bg-white/90 shadow-lg backdrop-blur-sm transition-colors duration-200 hover:bg-white"
-								>
-									<svg
-										class="h-4 w-4 text-gray-700"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M18 12H6"
-										/>
-									</svg>
-								</button>
-							</div>
+					<!-- Address Card -->
+					<div class="flex flex-col items-start gap-3">
+						<div class="flex-1">
+							<p class="mb-2 text-base font-semibold text-gray-900">
+								Hotel Address
+							</p>
+							<p class="leading-relaxed text-gray-700">
+								{{ hotelData.address?.[0]?.cityName }},
+								{{ hotelData.address?.[0]?.stateProv }}<br />
+								Postal Code: {{ hotelData.address?.[0]?.postalCode }}
+							</p>
 						</div>
-
-						<!-- Map Type Toggle -->
-						<div class="absolute right-6 bottom-6 z-40">
-							<button
-								@click="toggleMapType"
-								class="rounded-lg border border-gray-200/50 bg-white/90 px-3 py-2 text-xs font-medium text-gray-700 shadow-lg backdrop-blur-sm transition-colors duration-200 hover:bg-white"
+						<div class="flex w-full gap-2">
+							<CommonButton
+								variant="outline"
+								@click="copyAddress"
+								class="flex w-full items-center gap-2"
 							>
-								{{ mapType === "roadmap" ? "Satellite" : "Map" }}
-							</button>
-						</div>
-
-						<!-- Loading State -->
-						<div
-							v-if="!mapLoaded"
-							class="absolute inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-slate-100 to-blue-100"
-						>
-							<div class="text-center">
-								<div class="relative mx-auto mb-4 h-12 w-12">
-									<!-- Modern loading spinner -->
-									<div
-										class="absolute inset-0 rounded-full border-4 border-blue-200"
-									></div>
-									<div
-										class="absolute inset-0 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"
-									></div>
-								</div>
-								<p class="text-sm font-medium text-gray-600">Loading map...</p>
-							</div>
+								<CopyIcon class="h-4 w-4 text-gray-700" />
+								Copy Address
+							</CommonButton>
+							<CommonButton
+								@click="getDirections"
+								variant="primary"
+								size="md"
+								class="flex w-full items-center gap-2"
+							>
+								<MapIcon class="h-4 w-4 text-white" />
+								Get Directions
+							</CommonButton>
 						</div>
 					</div>
 
-					<!-- Address Card -->
-					<Card>
-						<div class="flex items-start gap-3">
-							<div class="flex-1">
-								<p class="mb-2 text-base font-semibold text-gray-900">
-									Hotel Address
-								</p>
-								<p class="leading-relaxed text-gray-700">
-									{{ hotelData.address?.[0]?.cityName }},
-									{{ hotelData.address?.[0]?.stateProv }}<br />
-									Postal Code: {{ hotelData.address?.[0]?.postalCode }}
-								</p>
-							</div>
-							<Button @click="copyAddress" variant="ghost">
-								<CopyIcon class="h-4 w-4 text-gray-700" />
-							</Button>
-						</div>
-					</Card>
-
-					<!-- Action Buttons -->
-					<Button
-						@click="getDirections"
-						variant="primary"
-						size="md"
-						class="flex w-full items-center gap-2"
-					>
-						<MapIcon class="h-4 w-4 text-white" />
-						Get Directions
-					</Button>
-
 					<!-- Fare Summary -->
-					<Card>
+					<CommonCard>
 						<h3 class="mb-4 text-lg font-semibold text-gray-900">
 							Fare Summary
 						</h3>
@@ -507,34 +388,37 @@
 								>
 							</div>
 						</div>
-					</Card>
+					</CommonCard>
 				</div>
 			</div>
 		</div>
 
-		<!-- Loading State -->
-
-		<div v-else class="flex h-96 items-center justify-center">
-			<div class="text-center">
-				<div
-					class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500"
-				></div>
-				<p class="text-xl text-gray-600">Loading hotel details...</p>
-			</div>
-		</div>
+		<!-- Photo Gallery Modal -->
+		<HotelPhotoGalleryModal
+			:is-open="isPhotoGalleryOpen"
+			:images="hotelData.gallery_all"
+			:hotel-name="hotelData.hotel_name"
+			@close="togglePhotoGallery"
+		/>
 	</div>
 </template>
 
 <script setup>
-import { StarIcon } from "lucide-vue-next"
-import { ChevronLeftIcon, MapIcon, CopyIcon } from "lucide-vue-next"
-import { Button, Card } from "~/components/common"
+import {
+	ChevronLeftIcon,
+	MapIcon,
+	CopyIcon,
+	StarIcon,
+	CheckIcon,
+} from "lucide-vue-next"
 
 const route = useRoute()
+const isPhotoGalleryOpen = ref(false)
+const showAllAmenities = ref(false)
 
 const {
 	data: hotel,
-	pending,
+	pending: isHotelDetailLoading,
 	error,
 } = useApi(`/api/hotels/${route.params.slug}`, {
 	method: "POST",
@@ -544,22 +428,7 @@ const {
 	watch: false,
 })
 
-// Extract hotel data from API response
 const hotelData = computed(() => hotel.value?.data || {})
-
-// Map state
-const mapLoaded = ref(false)
-const mapType = ref("roadmap")
-
-// Map functions
-const openGoogleMaps = () => {
-	const lat = hotelData.value.position?.latitude
-	const lng = hotelData.value.position?.longitude
-	if (lat && lng) {
-		const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
-		window.open(url, "_blank")
-	}
-}
 
 const getDirections = () => {
 	const lat = hotelData.value.position?.latitude
@@ -570,22 +439,18 @@ const getDirections = () => {
 	}
 }
 
-const toggleMapType = () => {
-	mapType.value = mapType.value === "roadmap" ? "satellite" : "roadmap"
-	// The map will automatically update due to the reactive URL binding
-}
-
 const copyAddress = async () => {
 	const address = hotelData.value.address?.[0]
 	if (address) {
 		const fullAddress = `${address.addressLine}, ${address.cityName}, ${address.stateProv}, ${address.postalCode}`
-		try {
-			await navigator.clipboard.writeText(fullAddress)
-			// You could add a toast notification here
-			console.log("Address copied to clipboard")
-		} catch (err) {
-			console.error("Failed to copy address:", err)
-		}
 	}
+}
+
+const togglePhotoGallery = () => {
+	isPhotoGalleryOpen.value = !isPhotoGalleryOpen.value
+}
+
+const toggleAmenities = () => {
+	showAllAmenities.value = !showAllAmenities.value
 }
 </script>

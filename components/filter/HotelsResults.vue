@@ -3,7 +3,7 @@
 		v-if="isLoading && isVisible"
 		class="absolute z-10 mt-1 max-h-72 min-h-20 w-full overflow-auto rounded-lg border border-gray-200 bg-white p-4 py-6 text-center text-gray-500 shadow-lg"
 	>
-		<SpinnerLoading :is-loading="true" />
+		<CommonSpinnerLoading :is-loading="true" />
 	</div>
 
 	<div
@@ -39,8 +39,6 @@
 </template>
 
 <script setup>
-import SpinnerLoading from "~/components/common/SpinnerLoading.vue"
-
 defineProps({
 	results: {
 		type: Array,

@@ -11,7 +11,7 @@
 			@blur="onInputBlur"
 		/>
 
-		<HotelsFilterResults
+		<FilterHotelsResults
 			:results="state.searchResults"
 			:is-visible="state.isResultsVisible"
 			:search-query="state.searchQuery"
@@ -22,10 +22,6 @@
 </template>
 
 <script setup>
-import { reactive, watch, computed } from "vue"
-import HotelsFilterResults from "~/components/filter/HotelsFilterResults.vue"
-import SpinnerLoading from "~/components/common/SpinnerLoading.vue"
-
 const props = defineProps({
 	modelValue: {
 		type: String,

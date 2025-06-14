@@ -17,7 +17,7 @@
 				/>
 				<label
 					:for="'amenity-' + amenity.id"
-					class="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-1 text-sm text-gray-700 transition-all duration-150 select-none peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white hover:border-blue-400 hover:bg-blue-50"
+					class="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-1 text-gray-700 transition-all duration-150 select-none peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white hover:border-blue-400 hover:bg-blue-50"
 				>
 					{{ amenity.name }}
 				</label>

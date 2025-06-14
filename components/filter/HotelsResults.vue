@@ -22,7 +22,7 @@
 				</div>
 				<div
 					v-if="result.city_name || result.country_name"
-					class="text-sm text-gray-500"
+					class="text-gray-500"
 				>
 					{{ result.city_name }} {{ result.country_name }}
 				</div>

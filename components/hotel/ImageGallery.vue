@@ -81,7 +81,7 @@
 									</span>
 								</div>
 								<p
-									class="text-sm font-semibold tracking-wide uppercase opacity-90 drop-shadow"
+									class="font-semibold tracking-wide uppercase opacity-90 drop-shadow"
 								>
 									More Photos
 								</p>

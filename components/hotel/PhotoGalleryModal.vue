@@ -24,7 +24,7 @@
 				</div>
 
 				<!-- Gallery Content -->
-				<div class="flex-1 overflow-auto py-4">
+				<div class="scrollbar-hide my-4 flex-1 overflow-auto">
 					<div class="mx-auto w-full">
 						<!-- Gallery Grid -->
 						<div

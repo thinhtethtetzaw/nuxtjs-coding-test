@@ -9,16 +9,14 @@
 		/>
 
 		<div class="flex flex-col gap-2 p-4">
-			<p class="text-primary text-sm">
+			<p class="text-primary">
 				{{ hotel.address?.[0]?.cityName || hotel.address?.[0]?.countryName }}
 			</p>
 			<h2 class="mb-2 text-xl font-semibold text-gray-700">
 				{{ hotel.hotel_name }}
 			</h2>
 			<div class="mt-4 flex items-center justify-between gap-2 text-gray-700">
-				<span class="text-sm text-gray-700">
-					Avg. Price: ${{ hotel.avg_price }}
-				</span>
+				<span class="text-gray-700"> Avg. Price: ${{ hotel.avg_price }} </span>
 				<span class="mx-2 text-gray-300">|</span>
 				<div class="flex items-center gap-1">
 					<div class="flex items-center gap-1">

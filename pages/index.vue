@@ -92,7 +92,6 @@
 
 <script setup>
 import { ref, computed } from "vue"
-import { HotelCard } from "~/components/hotel"
 import { SpinnerLoading, SkeletonLoading } from "~/components/common"
 import { HotelIcon } from "lucide-vue-next"
 import Button from "~/components/common/Button.vue"

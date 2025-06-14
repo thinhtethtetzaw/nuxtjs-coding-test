@@ -1,7 +1,7 @@
 <template>
 	<div v-if="isLoading" class="flex items-center justify-center">
 		<div
-			class="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"
+			:class="`animate-spin rounded-full border-b-2 border-blue-500 size-${size}`"
 		></div>
 	</div>
 </template>
@@ -11,6 +11,10 @@ defineProps({
 	isLoading: {
 		type: Boolean,
 		required: true,
+	},
+	size: {
+		type: String,
+		default: "8",
 	},
 })
 </script>

@@ -4,7 +4,7 @@
 			:value="modelValue"
 			type="text"
 			placeholder="Search hotels..."
-			class="w-full rounded-lg border border-gray-300 px-4 py-2 text-lg focus:outline-none"
+			class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none"
 			@input="onInputChange"
 			@keydown.enter.prevent="onSearchSubmit"
 			@focus="onInputFocus"

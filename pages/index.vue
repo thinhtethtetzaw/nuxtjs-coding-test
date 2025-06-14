@@ -1,5 +1,244 @@
 <template>
 	<section>
+		<!-- Sticky Search Bar -->
+		<Transition
+			name="sticky-form"
+			enter-active-class="transition-all duration-500 ease-out"
+			leave-active-class="transition-all duration-300 ease-in"
+			enter-from-class="opacity-0 -translate-y-full"
+			enter-to-class="opacity-100 translate-y-0"
+			leave-from-class="opacity-100 translate-y-0"
+			leave-to-class="opacity-0 -translate-y-full"
+		>
+			<div
+				v-if="showStickyForm"
+				class="fixed top-0 right-0 left-0 z-50 mx-auto border-b border-gray-200 bg-white px-20 py-3 shadow-lg"
+			>
+				<form @submit.prevent="searchRooms" class="w-full">
+					<div class="flex items-center gap-3">
+						<div class="max-w-xs flex-1">
+							<div class="relative">
+								<FilterHotelsSearch
+									v-model="searchQuery"
+									@select="onHotelSelect"
+									:placeholder="
+										selectedHotel ? selectedHotel.hotel_name : 'Choose hotel...'
+									"
+									class="compact"
+								/>
+								<div
+									v-if="selectedHotel"
+									class="absolute top-1/2 right-2 -translate-y-1/2"
+								>
+									<div class="h-2 w-2 rounded-full bg-green-500"></div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Check-in Date -->
+						<div class="max-w-56 flex-1">
+							<input
+								v-model="roomSearchParams.check_in"
+								type="date"
+								required
+								:min="today"
+								class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+							/>
+						</div>
+
+						<!-- Check-out Date -->
+						<div class="max-w-56 flex-1">
+							<input
+								v-model="roomSearchParams.check_out"
+								type="date"
+								required
+								:min="minCheckoutDate"
+								class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+							/>
+						</div>
+
+						<div class="relative max-w-60 flex-1">
+							<button
+								type="button"
+								@click="showStickyGuestSelector = !showStickyGuestSelector"
+								class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm transition-all duration-150 hover:border-gray-300 hover:shadow-sm focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none"
+							>
+								<div class="flex items-center justify-between">
+									<span class="text-sm text-gray-900">
+										{{ roomSearchParams.adults }} Adult{{
+											roomSearchParams.adults > 1 ? "s" : ""
+										}}
+										{{
+											roomSearchParams.children > 0
+												? `• ${roomSearchParams.children} Child${
+														roomSearchParams.children > 1 ? "ren" : ""
+													}`
+												: ""
+										}}
+										• {{ roomSearchParams.rooms }}
+										{{ roomSearchParams.rooms > 1 ? "rooms" : "room" }}
+									</span>
+									<ChevronDownIcon class="h-4 w-4 text-gray-400" />
+								</div>
+							</button>
+
+							<!-- Guest Selector Dropdown -->
+							<div
+								v-if="showStickyGuestSelector"
+								class="absolute top-full right-0 z-10 mt-1 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+							>
+								<div class="p-4">
+									<div class="space-y-4">
+										<!-- Rooms -->
+										<div class="flex items-center justify-between">
+											<span class="text-sm font-medium text-gray-900"
+												>Room{{ roomSearchParams.rooms > 1 ? "s" : "" }}</span
+											>
+											<div class="flex items-center gap-2">
+												<button
+													type="button"
+													@click="decrementRooms"
+													:disabled="roomSearchParams.rooms <= 1"
+													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+												>
+													<MinusIcon class="size-3" />
+												</button>
+												<span class="w-8 text-center text-sm">{{
+													roomSearchParams.rooms
+												}}</span>
+												<button
+													type="button"
+													@click="incrementRooms"
+													:disabled="roomSearchParams.rooms >= 8"
+													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+												>
+													<PlusIcon class="size-3" />
+												</button>
+											</div>
+										</div>
+
+										<!-- Adults -->
+										<div class="flex items-center justify-between">
+											<span class="text-sm font-medium text-gray-900"
+												>Adult{{ roomSearchParams.adults > 1 ? "s" : "" }}</span
+											>
+											<div class="flex items-center gap-2">
+												<button
+													type="button"
+													@click="decrementAdults"
+													:disabled="roomSearchParams.adults <= 1"
+													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+												>
+													<MinusIcon class="size-3" />
+												</button>
+												<span class="w-8 text-center text-sm">{{
+													roomSearchParams.adults
+												}}</span>
+												<button
+													type="button"
+													@click="incrementAdults"
+													:disabled="roomSearchParams.adults >= 8"
+													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+												>
+													<PlusIcon class="size-3" />
+												</button>
+											</div>
+										</div>
+
+										<!-- Children -->
+										<div class="flex items-center justify-between">
+											<span class="text-sm font-medium text-gray-900"
+												>Child{{
+													roomSearchParams.children > 1 ? "ren" : ""
+												}}</span
+											>
+											<div class="flex items-center gap-2">
+												<button
+													type="button"
+													@click="decrementChildren"
+													:disabled="roomSearchParams.children <= 0"
+													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+												>
+													<MinusIcon class="size-3" />
+												</button>
+												<span class="w-8 text-center text-sm">{{
+													roomSearchParams.children
+												}}</span>
+												<button
+													type="button"
+													@click="incrementChildren"
+													:disabled="roomSearchParams.children >= 4"
+													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+												>
+													<PlusIcon class="size-3" />
+												</button>
+											</div>
+										</div>
+
+										<!-- Children Ages -->
+										<div
+											v-if="roomSearchParams.children > 0"
+											class="border-t border-gray-100 pt-3"
+										>
+											<div class="mb-2">
+												<span class="text-sm font-medium text-gray-900"
+													>Child Ages</span
+												>
+											</div>
+											<div class="space-y-2">
+												<select
+													v-for="(childAge, index) in childrenAges"
+													:key="index"
+													v-model="childrenAges[index]"
+													@change="updateAgeOfChildrenString"
+													class="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:border-gray-400 focus:outline-none"
+												>
+													<option value="" disabled>
+														Child {{ index + 1 }} age
+													</option>
+													<option
+														v-for="age in 7"
+														:key="age + 7"
+														:value="age + 7"
+													>
+														{{ age + 7 }} years old
+													</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="border-t border-gray-100 px-4 py-2">
+									<button
+										type="button"
+										@click="showStickyGuestSelector = false"
+										class="w-full rounded bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
+									>
+										Done
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Search Button -->
+						<CommonButton
+							@click="searchRooms"
+							:disabled="isRoomSearching || !isRoomFormValid"
+							class="px-6"
+						>
+							<CommonSpinnerLoading
+								v-if="isRoomSearching"
+								:is-loading="isRoomSearching"
+								size="4"
+							/>
+							<SearchIcon v-else class="size-4 text-white" />
+							<span class="ml-2">Search</span>
+						</CommonButton>
+					</div>
+				</form>
+			</div>
+		</Transition>
+
 		<!-- Banner -->
 		<div class="relative">
 			<div
@@ -21,12 +260,12 @@
 				</div>
 			</div>
 			<div
+				ref="bannerFormRef"
 				class="absolute -bottom-20 left-1/2 z-10 w-5/6 -translate-x-1/2 transform"
 			>
 				<div
 					class="flex w-full flex-col items-center rounded-2xl bg-white p-6 shadow-lg"
 				>
-					<!-- Unified Search Form -->
 					<div class="w-full space-y-6">
 						<!-- Hotel Selection -->
 						<div>
@@ -73,7 +312,7 @@
 						<!-- Room Search Form -->
 						<form @submit.prevent="searchRooms" class="w-full">
 							<div class="grid grid-cols-12 gap-4">
-								<div class="col-span-12 md:col-span-4">
+								<div class="col-span-12 md:col-span-3">
 									<label class="mb-2 block text-sm font-medium text-gray-700">
 										Check-in Date
 									</label>
@@ -85,7 +324,7 @@
 										class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100"
 									/>
 								</div>
-								<div class="col-span-12 md:col-span-4">
+								<div class="col-span-12 md:col-span-3">
 									<label class="mb-2 block text-sm font-medium text-gray-700">
 										Check-out Date
 									</label>
@@ -97,7 +336,7 @@
 										class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100"
 									/>
 								</div>
-								<div class="col-span-12 md:col-span-4">
+								<div class="col-span-12 md:col-span-6">
 									<div class="grid grid-cols-12 gap-4">
 										<div class="col-span-8">
 											<label
@@ -161,21 +400,17 @@
 
 												<!-- Guest Selector Dropdown -->
 												<div
-													v-if="showGuestSelector && selectedHotel"
-													class="absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+													v-if="showGuestSelector"
+													class="absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
 												>
-													<div class="p-5">
-														<div class="space-y-6">
-															<!-- Rooms -->
+													<div class="space-y-4 divide-y divide-gray-100">
+														<!-- Rooms -->
+														<div class="space-y-2 py-2">
+															<p class="text-sm text-gray-500">
+																Number of room needed
+															</p>
 															<div class="flex items-center justify-between">
-																<div>
-																	<div class="font-medium text-gray-900">
-																		Rooms
-																	</div>
-																	<div class="mt-0.5 text-sm text-gray-500">
-																		Number of rooms needed
-																	</div>
-																</div>
+																<p class="font-medium text-gray-700">Room</p>
 																<div class="flex items-center gap-3">
 																	<button
 																		type="button"
@@ -185,7 +420,7 @@
 																	>
 																		<MinusIcon class="size-3 text-gray-600" />
 																	</button>
-																	<div class="w-12 text-center">
+																	<div class="w-8 text-center">
 																		<span class="font-medium text-gray-900">{{
 																			roomSearchParams.rooms
 																		}}</span>
@@ -200,19 +435,15 @@
 																	</button>
 																</div>
 															</div>
+														</div>
 
-															<div class="border-t border-gray-100"></div>
-
-															<!-- Adults -->
+														<!-- Adults -->
+														<div class="space-y-2 py-2">
+															<p class="text-sm text-gray-500">
+																Ages 18 or above
+															</p>
 															<div class="flex items-center justify-between">
-																<div>
-																	<div class="font-medium text-gray-900">
-																		Adults
-																	</div>
-																	<div class="mt-0.5 text-sm text-gray-500">
-																		Ages 18 or above
-																	</div>
-																</div>
+																<p class="font-medium text-gray-700">Adults</p>
 																<div class="flex items-center gap-3">
 																	<button
 																		type="button"
@@ -222,7 +453,7 @@
 																	>
 																		<MinusIcon class="size-3 text-gray-600" />
 																	</button>
-																	<div class="w-12 text-center">
+																	<div class="w-8 text-center">
 																		<span class="font-medium text-gray-900">{{
 																			roomSearchParams.adults
 																		}}</span>
@@ -237,19 +468,15 @@
 																	</button>
 																</div>
 															</div>
+														</div>
 
-															<div class="border-t border-gray-100"></div>
-
-															<!-- Children -->
+														<!-- Children -->
+														<div class="space-y-2 py-2">
+															<p class="text-sm text-gray-500">Ages 8-14</p>
 															<div class="flex items-center justify-between">
-																<div>
-																	<div class="font-medium text-gray-900">
-																		Children
-																	</div>
-																	<div class="mt-0.5 text-sm text-gray-500">
-																		Ages 8-14
-																	</div>
-																</div>
+																<p class="font-medium text-gray-700">
+																	Children
+																</p>
 																<div class="flex items-center gap-3">
 																	<button
 																		type="button"
@@ -259,7 +486,7 @@
 																	>
 																		<MinusIcon class="size-3 text-gray-600" />
 																	</button>
-																	<div class="w-12 text-center">
+																	<div class="w-8 text-center">
 																		<span class="font-medium text-gray-900">{{
 																			roomSearchParams.children
 																		}}</span>
@@ -274,52 +501,52 @@
 																	</button>
 																</div>
 															</div>
+														</div>
 
-															<!-- Children Ages -->
-															<div
-																v-if="roomSearchParams.children > 0"
-																class="pt-2"
-															>
-																<div class="border-t border-gray-100 pt-4">
-																	<div class="mb-3">
-																		<div
-																			class="mb-1 text-sm font-medium text-gray-900"
-																		>
-																			Child Ages
-																		</div>
-																		<div class="text-xs text-gray-500">
-																			Required for accurate pricing
-																		</div>
+														<!-- Children Ages -->
+														<div
+															v-if="roomSearchParams.children > 0"
+															class="pt-2"
+														>
+															<div class="border-t border-gray-100 pt-4">
+																<div class="mb-3">
+																	<div
+																		class="mb-1 text-sm font-medium text-gray-900"
+																	>
+																		Child Ages
 																	</div>
-																	<div class="space-y-2">
-																		<div
-																			v-for="(childAge, index) in childrenAges"
-																			:key="index"
-																			class="relative"
+																	<div class="text-xs text-gray-500">
+																		Required for accurate pricing
+																	</div>
+																</div>
+																<div class="space-y-2">
+																	<div
+																		v-for="(childAge, index) in childrenAges"
+																		:key="index"
+																		class="relative"
+																	>
+																		<select
+																			v-model="childrenAges[index]"
+																			@change="updateAgeOfChildrenString"
+																			class="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none"
 																		>
-																			<select
-																				v-model="childrenAges[index]"
-																				@change="updateAgeOfChildrenString"
-																				class="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none"
+																			<option value="" disabled>
+																				Child {{ index + 1 }} age
+																			</option>
+																			<option
+																				v-for="age in 7"
+																				:key="age + 7"
+																				:value="age + 7"
 																			>
-																				<option value="" disabled>
-																					Child {{ index + 1 }} age
-																				</option>
-																				<option
-																					v-for="age in 7"
-																					:key="age + 7"
-																					:value="age + 7"
-																				>
-																					{{ age + 7 }} years old
-																				</option>
-																			</select>
-																			<div
-																				class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
-																			>
-																				<ChevronDownIcon
-																					class="size-3 text-gray-600"
-																				/>
-																			</div>
+																				{{ age + 7 }} years old
+																			</option>
+																		</select>
+																		<div
+																			class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
+																		>
+																			<ChevronDownIcon
+																				class="size-3 text-gray-600"
+																			/>
 																		</div>
 																	</div>
 																</div>
@@ -327,23 +554,22 @@
 														</div>
 													</div>
 
-													<div class="border-t border-gray-100 px-5 py-3">
-														<button
-															type="button"
-															@click="showGuestSelector = false"
-															class="w-full rounded-md bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-1 focus:ring-gray-400 focus:outline-none"
-														>
-															Done
-														</button>
-													</div>
+													<CommonButton
+														type="button"
+														@click="showGuestSelector = false"
+														class="w-full !bg-gray-800"
+													>
+														Done
+													</CommonButton>
 												</div>
 											</div>
 										</div>
 										<div class="col-span-4">
 											<label
 												class="mb-2 block text-sm font-medium text-gray-700"
-												>&nbsp;</label
 											>
+												&nbsp;
+											</label>
 											<CommonButton
 												@click="searchRooms"
 												:disabled="isRoomSearching || !isRoomFormValid"
@@ -368,7 +594,11 @@
 		</div>
 
 		<!-- Room Search Results -->
-		<div v-if="roomSearchResults.length > 0" class="mx-auto mt-48 mb-12">
+		<div
+			v-if="roomSearchResults.length > 0"
+			class="mx-auto mt-48 mb-12"
+			:class="{ 'pt-20': showStickyForm }"
+		>
 			<div class="mb-6">
 				<h2 class="text-3xl font-bold text-gray-900">
 					Available Rooms at {{ selectedHotel?.hotel_name }}
@@ -488,6 +718,7 @@
 		<div
 			v-if="isRoomSearching"
 			class="mx-auto mt-48 mb-12 flex items-center justify-center py-12"
+			:class="{ 'pt-20': showStickyForm }"
 		>
 			<div class="text-center">
 				<CommonSpinnerLoading :is-loading="isRoomSearching" />
@@ -499,6 +730,7 @@
 		<div
 			v-if="roomSearchError"
 			class="mx-auto mt-48 mb-12 rounded-lg border border-red-200 bg-red-50 p-6 text-center"
+			:class="{ 'pt-20': showStickyForm }"
 		>
 			<div class="mb-3 flex items-center justify-center gap-2 text-red-600">
 				<AlertTriangleIcon class="size-5 text-red-600" />
@@ -513,7 +745,10 @@
 		</div>
 
 		<!-- Hotel List -->
-		<div class="mx-auto mt-48 grid grid-cols-12 gap-6">
+		<div
+			class="mx-auto mt-48 grid grid-cols-12 gap-6"
+			:class="{ '': showStickyForm }"
+		>
 			<div class="col-span-3">
 				<div class="sticky top-24">
 					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
@@ -571,7 +806,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, watch } from "vue"
+import { ref, computed, reactive, onMounted, onUnmounted, watch } from "vue"
 import { SpinnerLoading, SkeletonLoading } from "~/components/common"
 import {
 	HotelIcon,
@@ -593,6 +828,9 @@ const roomSearchResults = ref([])
 const roomSearchError = ref("")
 const isRoomSearching = ref(false)
 const showGuestSelector = ref(false)
+const showStickyGuestSelector = ref(false)
+const showStickyForm = ref(false)
+const bannerFormRef = ref(null)
 
 // Room search parameters
 const roomSearchParams = reactive({
@@ -695,6 +933,14 @@ const filteredHotels = computed(() => {
 	}
 })
 
+// Scroll handler for sticky form
+const handleScroll = () => {
+	if (bannerFormRef.value) {
+		const rect = bannerFormRef.value.getBoundingClientRect()
+		showStickyForm.value = rect.bottom < 0
+	}
+}
+
 // Methods
 const onHotelSelect = (hotel) => {
 	selectedHotel.value = hotel
@@ -771,9 +1017,14 @@ const updateAgeOfChildrenString = () => {
 }
 
 const searchRooms = async () => {
-	if (!selectedHotel.value) return
+	if (!selectedHotel.value) {
+		// Show error or prompt to select hotel
+		roomSearchError.value = "Please select a hotel first"
+		return
+	}
 
 	showGuestSelector.value = false
+	showStickyGuestSelector.value = false
 	isRoomSearching.value = true
 	roomSearchError.value = ""
 	roomSearchResults.value = []
@@ -818,6 +1069,13 @@ onMounted(() => {
 
 	roomSearchParams.check_in = tomorrow.toISOString().split("T")[0]
 	roomSearchParams.check_out = dayAfter.toISOString().split("T")[0]
+
+	// Add scroll listener
+	window.addEventListener("scroll", handleScroll)
+})
+
+onUnmounted(() => {
+	window.removeEventListener("scroll", handleScroll)
 })
 
 // Watch for check-in date changes

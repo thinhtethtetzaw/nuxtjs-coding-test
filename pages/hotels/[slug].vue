@@ -83,35 +83,35 @@
 						</CommonButton>
 					</div>
 
-					<Tabs
+					<HotelTabWrapper
 						:tabs="tabs"
 						:activeTab="activeTab"
 						@update:activeTab="activeTab = $event"
 					>
 						<template #default="{ activeTab }">
-							<OverviewTab
+							<HotelTabOverview
 								v-if="activeTab === 'overview'"
 								:hotelData="hotelData"
 							/>
-							<HotelRoomsTab
+							<HotelTabRooms
 								v-else-if="activeTab === 'rooms'"
 								:hotelData="hotelData"
 							/>
-							<HotelAmenitiesTab
+							<HotelTabAmenities
 								v-else-if="activeTab === 'amenities'"
 								:hotelData="hotelData"
 							/>
-							<HotelPoliciesTab
+							<HotelTabPolicies
 								v-else-if="activeTab === 'policies'"
 								:hotelData="hotelData"
 								:getPaymentMethodName="getPaymentMethodName"
 							/>
-							<HotelContactTab
+							<HotelTabContact
 								v-else-if="activeTab === 'contact'"
 								:hotelData="hotelData"
 							/>
 						</template>
-					</Tabs>
+					</HotelTabWrapper>
 				</div>
 
 				<!-- Right Column -->
@@ -177,8 +177,6 @@ import {
 	BanknoteIcon,
 	WalletIcon,
 } from "lucide-vue-next"
-import Tabs from "~/components/hotel/Tabs.vue"
-import OverviewTab from "~/components/hotel/OverviewTab.vue"
 
 const route = useRoute()
 const isPhotoGalleryOpen = ref(false)

@@ -13,7 +13,7 @@
 
 		<FilterHotelsResults
 			:results="state.searchResults"
-			:is-visible="state.isResultsVisible"
+			:is-visible="isResultsVisible"
 			:search-query="state.searchQuery"
 			@select="onResultSelect"
 			:is-loading="state.isLoading"
@@ -34,11 +34,12 @@ const emit = defineEmits(["update:modelValue", "select", "search"])
 const state = reactive({
 	searchResults: [],
 	isLoading: false,
-	isResultsVisible: false,
+	isInputFocused: false,
 	searchQuery: "",
 })
 
 let searchDebounceTimer = null
+let hasUserTyped = false
 
 const { data, execute } = useLazyApi(
 	"/api/hotels/search",
@@ -49,22 +50,25 @@ const { data, execute } = useLazyApi(
 )
 
 const onInputChange = (event) => {
+	hasUserTyped = true
 	emit("update:modelValue", event.target.value)
 }
 
 const onInputFocus = () => {
-	if (state.searchResults.length > 0) state.isResultsVisible = true
+	state.isInputFocused = true
 }
 
 const onInputBlur = () => {
 	setTimeout(() => {
-		state.isResultsVisible = false
+		state.isInputFocused = false
 	}, 200)
 }
 
 const onResultSelect = (result) => {
 	emit("select", result)
-	state.isResultsVisible = false
+	state.isInputFocused = false
+	state.searchResults = []
+	hasUserTyped = false
 }
 
 const onSearchSubmit = () => {
@@ -74,7 +78,7 @@ const onSearchSubmit = () => {
 const fetchSearchResults = async (query) => {
 	if (!query.trim()) {
 		state.searchResults = []
-		state.isResultsVisible = false
+		state.isInputFocused = false
 		return
 	}
 	state.isLoading = true
@@ -82,10 +86,10 @@ const fetchSearchResults = async (query) => {
 		state.searchQuery = query
 		await execute()
 		state.searchResults = data.value?.data || []
-		state.isResultsVisible = true
+		state.isInputFocused = true
 	} catch (error) {
 		state.searchResults = []
-		state.isResultsVisible = true
+		state.isInputFocused = true
 	}
 	state.isLoading = false
 }
@@ -93,10 +97,15 @@ const fetchSearchResults = async (query) => {
 watch(
 	() => props.modelValue,
 	(newValue) => {
+		if (!hasUserTyped) return
 		if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
 		searchDebounceTimer = setTimeout(() => {
 			fetchSearchResults(newValue)
 		}, 300)
 	},
 )
+
+const isResultsVisible = computed(() => {
+	return state.isInputFocused && state.searchResults.length > 0
+})
 </script>

@@ -16,224 +16,25 @@
 			>
 				<form @submit.prevent="searchRooms" class="w-full">
 					<div class="flex items-center gap-3">
-						<div class="max-w-xs flex-1">
-							<div class="relative">
-								<FilterHotelsSearch
-									v-model="searchQuery"
-									@select="onHotelSelect"
-									:placeholder="
-										selectedHotel ? selectedHotel.hotel_name : 'Choose hotel...'
-									"
-									class="compact"
-								/>
-								<div
-									v-if="selectedHotel"
-									class="absolute top-1/2 right-2 -translate-y-1/2"
-								>
-									<div class="h-2 w-2 rounded-full bg-green-500"></div>
-								</div>
-							</div>
-						</div>
-
-						<!-- Check-in Date -->
-						<div class="max-w-56 flex-1">
-							<input
-								v-model="roomSearchParams.check_in"
-								type="date"
-								required
-								:min="today"
-								class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+						<div class="relative w-80 flex-shrink-0">
+							<FilterHotelsSearch
+								v-model="searchQuery"
+								@select="onHotelSelect"
+								:placeholder="
+									selectedHotel ? selectedHotel.hotel_name : 'Choose hotel...'
+								"
+								class="compact"
 							/>
 						</div>
 
-						<!-- Check-out Date -->
-						<div class="max-w-56 flex-1">
-							<input
-								v-model="roomSearchParams.check_out"
-								type="date"
-								required
-								:min="minCheckoutDate"
-								class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+						<div class="flex-1">
+							<FilterRoomSearch
+								v-model="roomSearchParams"
+								:is-searching="isRoomSearching"
+								:is-compact="true"
+								@search="searchRooms"
 							/>
 						</div>
-
-						<div class="relative max-w-60 flex-1">
-							<button
-								type="button"
-								@click="showStickyGuestSelector = !showStickyGuestSelector"
-								class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm transition-all duration-150 hover:border-gray-300 hover:shadow-sm focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none"
-							>
-								<div class="flex items-center justify-between">
-									<span class="text-sm text-gray-900">
-										{{ roomSearchParams.adults }} Adult{{
-											roomSearchParams.adults > 1 ? "s" : ""
-										}}
-										{{
-											roomSearchParams.children > 0
-												? `• ${roomSearchParams.children} Child${
-														roomSearchParams.children > 1 ? "ren" : ""
-													}`
-												: ""
-										}}
-										• {{ roomSearchParams.rooms }}
-										{{ roomSearchParams.rooms > 1 ? "rooms" : "room" }}
-									</span>
-									<ChevronDownIcon class="h-4 w-4 text-gray-400" />
-								</div>
-							</button>
-
-							<!-- Guest Selector Dropdown -->
-							<div
-								v-if="showStickyGuestSelector"
-								class="absolute top-full right-0 z-10 mt-1 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
-							>
-								<div class="p-4">
-									<div class="space-y-4">
-										<!-- Rooms -->
-										<div class="flex items-center justify-between">
-											<span class="text-sm font-medium text-gray-900"
-												>Room{{ roomSearchParams.rooms > 1 ? "s" : "" }}</span
-											>
-											<div class="flex items-center gap-2">
-												<button
-													type="button"
-													@click="decrementRooms"
-													:disabled="roomSearchParams.rooms <= 1"
-													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-												>
-													<MinusIcon class="size-3" />
-												</button>
-												<span class="w-8 text-center text-sm">{{
-													roomSearchParams.rooms
-												}}</span>
-												<button
-													type="button"
-													@click="incrementRooms"
-													:disabled="roomSearchParams.rooms >= 8"
-													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-												>
-													<PlusIcon class="size-3" />
-												</button>
-											</div>
-										</div>
-
-										<!-- Adults -->
-										<div class="flex items-center justify-between">
-											<span class="text-sm font-medium text-gray-900"
-												>Adult{{ roomSearchParams.adults > 1 ? "s" : "" }}</span
-											>
-											<div class="flex items-center gap-2">
-												<button
-													type="button"
-													@click="decrementAdults"
-													:disabled="roomSearchParams.adults <= 1"
-													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-												>
-													<MinusIcon class="size-3" />
-												</button>
-												<span class="w-8 text-center text-sm">{{
-													roomSearchParams.adults
-												}}</span>
-												<button
-													type="button"
-													@click="incrementAdults"
-													:disabled="roomSearchParams.adults >= 8"
-													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-												>
-													<PlusIcon class="size-3" />
-												</button>
-											</div>
-										</div>
-
-										<!-- Children -->
-										<div class="flex items-center justify-between">
-											<span class="text-sm font-medium text-gray-900"
-												>Child{{
-													roomSearchParams.children > 1 ? "ren" : ""
-												}}</span
-											>
-											<div class="flex items-center gap-2">
-												<button
-													type="button"
-													@click="decrementChildren"
-													:disabled="roomSearchParams.children <= 0"
-													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-												>
-													<MinusIcon class="size-3" />
-												</button>
-												<span class="w-8 text-center text-sm">{{
-													roomSearchParams.children
-												}}</span>
-												<button
-													type="button"
-													@click="incrementChildren"
-													:disabled="roomSearchParams.children >= 4"
-													class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-												>
-													<PlusIcon class="size-3" />
-												</button>
-											</div>
-										</div>
-
-										<!-- Children Ages -->
-										<div
-											v-if="roomSearchParams.children > 0"
-											class="border-t border-gray-100 pt-3"
-										>
-											<div class="mb-2">
-												<span class="text-sm font-medium text-gray-900"
-													>Child Ages</span
-												>
-											</div>
-											<div class="space-y-2">
-												<select
-													v-for="(childAge, index) in childrenAges"
-													:key="index"
-													v-model="childrenAges[index]"
-													@change="updateAgeOfChildrenString"
-													class="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:border-gray-400 focus:outline-none"
-												>
-													<option value="" disabled>
-														Child {{ index + 1 }} age
-													</option>
-													<option
-														v-for="age in 7"
-														:key="age + 7"
-														:value="age + 7"
-													>
-														{{ age + 7 }} years old
-													</option>
-												</select>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="border-t border-gray-100 px-4 py-2">
-									<button
-										type="button"
-										@click="showStickyGuestSelector = false"
-										class="w-full rounded bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
-									>
-										Done
-									</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- Search Button -->
-						<CommonButton
-							@click="searchRooms"
-							:disabled="isRoomSearching || !isRoomFormValid"
-							class="px-6"
-						>
-							<CommonSpinnerLoading
-								v-if="isRoomSearching"
-								:is-loading="isRoomSearching"
-								size="4"
-							/>
-							<SearchIcon v-else class="size-4 text-white" />
-							<span class="ml-2">Search</span>
-						</CommonButton>
 					</div>
 				</form>
 			</div>
@@ -267,327 +68,19 @@
 					class="flex w-full flex-col items-center rounded-2xl bg-white p-6 shadow-lg"
 				>
 					<div class="w-full space-y-6">
-						<!-- Hotel Selection -->
-						<div>
-							<FilterHotelsSearch
-								v-model="searchQuery"
-								@select="onHotelSelect"
-								:placeholder="
-									selectedHotel ? selectedHotel.hotel_name : 'Search hotels...'
-								"
-							/>
+						<FilterHotelsSearch
+							v-model="searchQuery"
+							@select="onHotelSelect"
+							:placeholder="
+								selectedHotel ? selectedHotel.hotel_name : 'Search hotels...'
+							"
+						/>
 
-							<!-- Selected Hotel Display -->
-							<div
-								v-if="selectedHotel"
-								class="mt-3 flex items-center gap-3 rounded-lg bg-blue-50 p-3"
-							>
-								<div class="flex-shrink-0">
-									<img
-										:src="
-											selectedHotel.gallery?.[0]?.url ||
-											'/placeholder-hotel.jpg'
-										"
-										:alt="selectedHotel.hotel_name"
-										class="h-12 w-12 rounded-lg object-cover"
-									/>
-								</div>
-								<div class="flex-1">
-									<h4 class="font-medium text-gray-900">
-										{{ selectedHotel.hotel_name }}
-									</h4>
-									<p class="text-sm text-gray-600">
-										{{ selectedHotel.address }}
-									</p>
-								</div>
-								<button
-									@click="clearSelectedHotel"
-									class="text-gray-400 hover:text-gray-600"
-								>
-									<XIcon class="size-5" />
-								</button>
-							</div>
-						</div>
-
-						<!-- Room Search Form -->
-						<form @submit.prevent="searchRooms" class="w-full">
-							<div class="grid grid-cols-12 gap-4">
-								<div class="col-span-12 md:col-span-3">
-									<label class="mb-2 block text-sm font-medium text-gray-700">
-										Check-in Date
-									</label>
-									<input
-										v-model="roomSearchParams.check_in"
-										type="date"
-										required
-										:min="today"
-										class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100"
-									/>
-								</div>
-								<div class="col-span-12 md:col-span-3">
-									<label class="mb-2 block text-sm font-medium text-gray-700">
-										Check-out Date
-									</label>
-									<input
-										v-model="roomSearchParams.check_out"
-										type="date"
-										required
-										:min="minCheckoutDate"
-										class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100"
-									/>
-								</div>
-								<div class="col-span-12 md:col-span-6">
-									<div class="grid grid-cols-12 gap-4">
-										<div class="col-span-8">
-											<label
-												class="mb-2 block text-sm font-medium text-gray-700"
-											>
-												Guests & Rooms
-											</label>
-											<div class="relative">
-												<button
-													type="button"
-													@click="showGuestSelector = !showGuestSelector"
-													class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm transition-all duration-150 hover:border-gray-300 hover:shadow-sm focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none disabled:bg-gray-100"
-												>
-													<div class="flex items-center justify-between">
-														<div class="flex items-center gap-3">
-															<div
-																class="flex items-center gap-2 text-gray-900"
-															>
-																<span class="font-medium">{{
-																	roomSearchParams.adults
-																}}</span>
-																<span class="text-gray-500"
-																	>adult{{
-																		roomSearchParams.adults > 1 ? "s" : ""
-																	}}</span
-																>
-																<span
-																	v-if="roomSearchParams.children > 0"
-																	class="text-gray-400"
-																	>•</span
-																>
-																<template v-if="roomSearchParams.children > 0">
-																	<span class="font-medium">{{
-																		roomSearchParams.children
-																	}}</span>
-																	<span class="text-gray-500"
-																		>child{{
-																			roomSearchParams.children > 1 ? "ren" : ""
-																		}}</span
-																	>
-																</template>
-																<span class="text-gray-400">•</span>
-																<span class="font-medium">{{
-																	roomSearchParams.rooms
-																}}</span>
-																<span class="text-gray-500"
-																	>room{{
-																		roomSearchParams.rooms > 1 ? "s" : ""
-																	}}</span
-																>
-															</div>
-														</div>
-														<div class="flex items-center">
-															<ChevronDownIcon
-																class="h-4 w-4 text-gray-400 transition-transform duration-200"
-																:class="{ 'rotate-180': showGuestSelector }"
-															/>
-														</div>
-													</div>
-												</button>
-
-												<!-- Guest Selector Dropdown -->
-												<div
-													v-if="showGuestSelector"
-													class="absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
-												>
-													<div class="space-y-4 divide-y divide-gray-100">
-														<!-- Rooms -->
-														<div class="space-y-2 py-2">
-															<p class="text-sm text-gray-500">
-																Number of room needed
-															</p>
-															<div class="flex items-center justify-between">
-																<p class="font-medium text-gray-700">Room</p>
-																<div class="flex items-center gap-3">
-																	<button
-																		type="button"
-																		@click="decrementRooms"
-																		:disabled="roomSearchParams.rooms <= 1"
-																		class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-																	>
-																		<MinusIcon class="size-3 text-gray-600" />
-																	</button>
-																	<div class="w-8 text-center">
-																		<span class="font-medium text-gray-900">{{
-																			roomSearchParams.rooms
-																		}}</span>
-																	</div>
-																	<button
-																		type="button"
-																		@click="incrementRooms"
-																		:disabled="roomSearchParams.rooms >= 8"
-																		class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-																	>
-																		<PlusIcon class="size-3 text-gray-600" />
-																	</button>
-																</div>
-															</div>
-														</div>
-
-														<!-- Adults -->
-														<div class="space-y-2 py-2">
-															<p class="text-sm text-gray-500">
-																Ages 18 or above
-															</p>
-															<div class="flex items-center justify-between">
-																<p class="font-medium text-gray-700">Adults</p>
-																<div class="flex items-center gap-3">
-																	<button
-																		type="button"
-																		@click="decrementAdults"
-																		:disabled="roomSearchParams.adults <= 1"
-																		class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-																	>
-																		<MinusIcon class="size-3 text-gray-600" />
-																	</button>
-																	<div class="w-8 text-center">
-																		<span class="font-medium text-gray-900">{{
-																			roomSearchParams.adults
-																		}}</span>
-																	</div>
-																	<button
-																		type="button"
-																		@click="incrementAdults"
-																		:disabled="roomSearchParams.adults >= 8"
-																		class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-																	>
-																		<PlusIcon class="size-3 text-gray-600" />
-																	</button>
-																</div>
-															</div>
-														</div>
-
-														<!-- Children -->
-														<div class="space-y-2 py-2">
-															<p class="text-sm text-gray-500">Ages 8-14</p>
-															<div class="flex items-center justify-between">
-																<p class="font-medium text-gray-700">
-																	Children
-																</p>
-																<div class="flex items-center gap-3">
-																	<button
-																		type="button"
-																		@click="decrementChildren"
-																		:disabled="roomSearchParams.children <= 0"
-																		class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-																	>
-																		<MinusIcon class="size-3 text-gray-600" />
-																	</button>
-																	<div class="w-8 text-center">
-																		<span class="font-medium text-gray-900">{{
-																			roomSearchParams.children
-																		}}</span>
-																	</div>
-																	<button
-																		type="button"
-																		@click="incrementChildren"
-																		:disabled="roomSearchParams.children >= 4"
-																		class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-																	>
-																		<PlusIcon class="size-3 text-gray-600" />
-																	</button>
-																</div>
-															</div>
-														</div>
-
-														<!-- Children Ages -->
-														<div
-															v-if="roomSearchParams.children > 0"
-															class="pt-2"
-														>
-															<div class="border-t border-gray-100 pt-4">
-																<div class="mb-3">
-																	<div
-																		class="mb-1 text-sm font-medium text-gray-900"
-																	>
-																		Child Ages
-																	</div>
-																	<div class="text-xs text-gray-500">
-																		Required for accurate pricing
-																	</div>
-																</div>
-																<div class="space-y-2">
-																	<div
-																		v-for="(childAge, index) in childrenAges"
-																		:key="index"
-																		class="relative"
-																	>
-																		<select
-																			v-model="childrenAges[index]"
-																			@change="updateAgeOfChildrenString"
-																			class="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none"
-																		>
-																			<option value="" disabled>
-																				Child {{ index + 1 }} age
-																			</option>
-																			<option
-																				v-for="age in 7"
-																				:key="age + 7"
-																				:value="age + 7"
-																			>
-																				{{ age + 7 }} years old
-																			</option>
-																		</select>
-																		<div
-																			class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
-																		>
-																			<ChevronDownIcon
-																				class="size-3 text-gray-600"
-																			/>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<CommonButton
-														type="button"
-														@click="showGuestSelector = false"
-														class="w-full !bg-gray-800"
-													>
-														Done
-													</CommonButton>
-												</div>
-											</div>
-										</div>
-										<div class="col-span-4">
-											<label
-												class="mb-2 block text-sm font-medium text-gray-700"
-											>
-												&nbsp;
-											</label>
-											<CommonButton
-												@click="searchRooms"
-												:disabled="isRoomSearching || !isRoomFormValid"
-												class="w-full"
-											>
-												<CommonSpinnerLoading
-													v-if="isRoomSearching"
-													:is-loading="isRoomSearching"
-													size="4"
-												/>
-												<SearchIcon v-else class="size-4 text-white" />
-												<span class="ml-2">Search</span>
-											</CommonButton>
-										</div>
-									</div>
-								</div>
-							</div>
-						</form>
+						<FilterRoomSearch
+							v-model="roomSearchParams"
+							:is-searching="isRoomSearching"
+							@search="searchRooms"
+						/>
 					</div>
 				</div>
 			</div>
@@ -753,7 +246,7 @@
 				<div class="sticky top-24">
 					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
 					<div v-if="isHotelsLoading">
-						<SkeletonLoading />
+						<CommonSkeletonLoading />
 					</div>
 					<div v-else class="flex flex-col gap-6">
 						<FilterPriceRange v-model="filters" />
@@ -772,7 +265,7 @@
 					v-if="isHotelsLoading"
 					class="flex items-center justify-center py-10"
 				>
-					<SpinnerLoading :is-loading="isHotelsLoading" />
+					<CommonSpinnerLoading :is-loading="isHotelsLoading" />
 				</div>
 				<div v-if="!isHotelsLoading">
 					<h2 class="mb-4 text-2xl font-bold">Discover Our Collection</h2>
@@ -806,8 +299,6 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, onUnmounted, watch } from "vue"
-import { SpinnerLoading, SkeletonLoading } from "~/components/common"
 import {
 	HotelIcon,
 	UsersIcon,
@@ -820,15 +311,15 @@ import {
 	PlusIcon,
 	CheckIcon,
 } from "lucide-vue-next"
-import Button from "~/components/common/Button.vue"
+
+const route = useRoute()
+const router = useRouter()
 
 const searchQuery = ref("")
 const selectedHotel = ref(null)
 const roomSearchResults = ref([])
 const roomSearchError = ref("")
 const isRoomSearching = ref(false)
-const showGuestSelector = ref(false)
-const showStickyGuestSelector = ref(false)
 const showStickyForm = ref(false)
 const bannerFormRef = ref(null)
 
@@ -842,13 +333,87 @@ const roomSearchParams = reactive({
 	age_of_children: "",
 })
 
-const childrenAges = ref([])
-
 const filters = ref({
 	priceMin: null,
 	priceMax: null,
 	selectedAmenities: [],
 })
+
+// Function to update URL parameters
+const updateUrlParams = () => {
+	const query = { ...route.query }
+
+	// Always set these fields
+	query.checkin = roomSearchParams.check_in
+	query.checkout = roomSearchParams.check_out
+	query.rooms = roomSearchParams.rooms.toString()
+	query.adults = roomSearchParams.adults.toString()
+	query.children = roomSearchParams.children.toString()
+
+	// Only include ages if set
+	if (roomSearchParams.age_of_children) {
+		query.ages = roomSearchParams.age_of_children
+	} else {
+		delete query.ages
+	}
+
+	// Hotel search
+	if (searchQuery.value) {
+		query.search = searchQuery.value
+	} else {
+		delete query.search
+	}
+
+	// Update URL without triggering navigation
+	router.replace({ query })
+}
+
+// Function to initialize from URL parameters
+const initializeFromUrl = () => {
+	const query = route.query
+
+	// Hotel search
+	if (query.search) {
+		searchQuery.value = String(query.search)
+	}
+
+	// Room search parameters
+	if (query.checkin) {
+		roomSearchParams.check_in = String(query.checkin)
+	}
+
+	if (query.checkout) {
+		roomSearchParams.check_out = String(query.checkout)
+	}
+
+	if (query.rooms) {
+		roomSearchParams.rooms = parseInt(String(query.rooms)) || 1
+	}
+
+	if (query.adults) {
+		roomSearchParams.adults = parseInt(String(query.adults)) || 2
+	}
+
+	if (query.children) {
+		roomSearchParams.children = parseInt(String(query.children)) || 0
+	}
+
+	if (query.ages) {
+		roomSearchParams.age_of_children = String(query.ages)
+	}
+}
+
+// Function to find and set selected hotel from URL
+const findHotelFromUrl = async () => {
+	const hotelSlug = String(route.query.hotel || "")
+	if (hotelSlug && hotels.value?.data) {
+		const hotel = hotels.value.data.find((h) => h.slug === hotelSlug)
+		if (hotel) {
+			selectedHotel.value = hotel
+			searchQuery.value = hotel.hotel_name
+		}
+	}
+}
 
 // Computed properties
 const today = computed(() => {
@@ -948,10 +513,13 @@ const onHotelSelect = (hotel) => {
 	// Clear previous room search results
 	roomSearchResults.value = []
 	roomSearchError.value = ""
+	updateUrlParams()
 }
 
 const selectHotelForBooking = (hotel) => {
 	selectedHotel.value = hotel
+	searchQuery.value = hotel.hotel_name
+	updateUrlParams()
 	// Scroll to room search form
 	window.scrollTo({ top: 0, behavior: "smooth" })
 }
@@ -961,29 +529,43 @@ const clearSelectedHotel = () => {
 	searchQuery.value = ""
 	roomSearchResults.value = []
 	roomSearchError.value = ""
+	updateUrlParams()
 }
 
 // Room search methods
 const incrementRooms = () => {
-	if (roomSearchParams.rooms < 8) roomSearchParams.rooms++
+	if (roomSearchParams.rooms < 8) {
+		roomSearchParams.rooms++
+		updateUrlParams()
+	}
 }
 
 const decrementRooms = () => {
-	if (roomSearchParams.rooms > 1) roomSearchParams.rooms--
+	if (roomSearchParams.rooms > 1) {
+		roomSearchParams.rooms--
+		updateUrlParams()
+	}
 }
 
 const incrementAdults = () => {
-	if (roomSearchParams.adults < 8) roomSearchParams.adults++
+	if (roomSearchParams.adults < 8) {
+		roomSearchParams.adults++
+		updateUrlParams()
+	}
 }
 
 const decrementAdults = () => {
-	if (roomSearchParams.adults > 1) roomSearchParams.adults--
+	if (roomSearchParams.adults > 1) {
+		roomSearchParams.adults--
+		updateUrlParams()
+	}
 }
 
 const incrementChildren = () => {
 	if (roomSearchParams.children < 4) {
 		roomSearchParams.children++
 		updateChildrenAges()
+		updateUrlParams()
 	}
 }
 
@@ -991,6 +573,7 @@ const decrementChildren = () => {
 	if (roomSearchParams.children > 0) {
 		roomSearchParams.children--
 		updateChildrenAges()
+		updateUrlParams()
 	}
 }
 
@@ -1014,6 +597,7 @@ const updateAgeOfChildrenString = () => {
 		const validAges = childrenAges.value.filter((age) => age !== "")
 		roomSearchParams.age_of_children = validAges.join(",")
 	}
+	updateUrlParams()
 }
 
 const searchRooms = async () => {
@@ -1023,8 +607,7 @@ const searchRooms = async () => {
 		return
 	}
 
-	showGuestSelector.value = false
-	showStickyGuestSelector.value = false
+	showStickyForm.value = false
 	isRoomSearching.value = true
 	roomSearchError.value = ""
 	roomSearchResults.value = []
@@ -1061,14 +644,22 @@ const searchRooms = async () => {
 }
 
 // Initialize default dates
-onMounted(() => {
+onMounted(async () => {
 	const tomorrow = new Date()
 	tomorrow.setDate(tomorrow.getDate() + 1)
 	const dayAfter = new Date()
 	dayAfter.setDate(dayAfter.getDate() + 2)
 
-	roomSearchParams.check_in = tomorrow.toISOString().split("T")[0]
-	roomSearchParams.check_out = dayAfter.toISOString().split("T")[0]
+	// Set default dates if not in URL
+	if (!route.query.checkin) {
+		roomSearchParams.check_in = tomorrow.toISOString().split("T")[0]
+	}
+	if (!route.query.checkout) {
+		roomSearchParams.check_out = dayAfter.toISOString().split("T")[0]
+	}
+
+	// Initialize from URL parameters
+	initializeFromUrl()
 
 	// Add scroll listener
 	window.addEventListener("scroll", handleScroll)
@@ -1077,6 +668,18 @@ onMounted(() => {
 onUnmounted(() => {
 	window.removeEventListener("scroll", handleScroll)
 })
+
+// Watch for hotels data to be loaded, then find hotel from URL
+watch(
+	hotels,
+	async (newHotels) => {
+		if (newHotels?.data) {
+			await nextTick()
+			await findHotelFromUrl()
+		}
+	},
+	{ immediate: true },
+)
 
 // Watch for check-in date changes
 watch(
@@ -1091,6 +694,49 @@ watch(
 			checkIn.setDate(checkIn.getDate() + 1)
 			roomSearchParams.check_out = checkIn.toISOString().split("T")[0]
 		}
+		updateUrlParams()
 	},
+)
+
+// Watch for check-out date changes
+watch(
+	() => roomSearchParams.check_out,
+	() => {
+		updateUrlParams()
+	},
+)
+
+// Watch for search query changes
+watch(searchQuery, (newQuery) => {
+	if (!selectedHotel.value || selectedHotel.value.hotel_name !== newQuery) {
+		// Only update URL if it's a manual search, not a hotel selection
+		updateUrlParams()
+	}
+})
+
+// Watch for filter changes
+watch(
+	filters,
+	() => {
+		updateUrlParams()
+	},
+	{ deep: true },
+)
+
+// Watch for route changes (browser back/forward)
+watch(
+	() => route.query,
+	(newQuery, oldQuery) => {
+		// Only reinitialize if the query actually changed
+		if (JSON.stringify(newQuery) !== JSON.stringify(oldQuery)) {
+			initializeFromUrl()
+			nextTick(() => {
+				if (hotels.value?.data) {
+					findHotelFromUrl()
+				}
+			})
+		}
+	},
+	{ deep: true },
 )
 </script>

@@ -39,7 +39,7 @@
 				</div>
 			</div>
 			<button
-				@click="navigateTo(`/hotels/${hotel.slug}`)"
+				@click="viewDetails"
 				class="bg-primary mt-2 cursor-pointer rounded-full px-4 py-2 text-white transition-all duration-200 hover:scale-105"
 			>
 				View Details
@@ -50,10 +50,24 @@
 
 <script setup>
 import { StarIcon, StarHalfIcon } from "lucide-vue-next"
+import { useRoute, navigateTo } from "vue-router"
+
 const props = defineProps({
 	hotel: {
 		type: Object,
 		required: true,
 	},
 })
+
+const route = useRoute()
+
+const viewDetails = () => {
+	navigateTo({
+		path: `/hotels/${props.hotel.slug}`,
+		query: {
+			...route.query,
+			search: props.hotel.hotel_name,
+		},
+	})
+}
 </script>

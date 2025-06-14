@@ -53,149 +53,142 @@
 				<!-- Compact Guest Selector Dropdown -->
 				<div
 					v-if="showGuestSelector"
-					class="absolute top-full right-0 z-10 mt-1 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+					class="absolute top-full right-0 z-10 mt-1 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
 				>
-					<div class="p-4">
-						<div class="space-y-4">
-							<!-- Rooms -->
-							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium text-gray-900"
-									>Room{{ searchParams.rooms > 1 ? "s" : "" }}</span
-								>
-								<div class="flex items-center gap-2">
-									<button
-										type="button"
-										@click="decrementRooms"
-										:disabled="searchParams.rooms <= 1"
-										class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-									>
-										<MinusIcon class="size-3" />
-									</button>
-									<span class="w-8 text-center text-sm">{{
-										searchParams.rooms
-									}}</span>
-									<button
-										type="button"
-										@click="incrementRooms"
-										:disabled="searchParams.rooms >= 8"
-										class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-									>
-										<PlusIcon class="size-3" />
-									</button>
-								</div>
-							</div>
-
-							<!-- Adults -->
-							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium text-gray-900"
-									>Adult{{ searchParams.adults > 1 ? "s" : "" }}</span
-								>
-								<div class="flex items-center gap-2">
-									<button
-										type="button"
-										@click="decrementAdults"
-										:disabled="searchParams.adults <= 1"
-										class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-									>
-										<MinusIcon class="size-3" />
-									</button>
-									<span class="w-8 text-center text-sm">{{
-										searchParams.adults
-									}}</span>
-									<button
-										type="button"
-										@click="incrementAdults"
-										:disabled="searchParams.adults >= 8"
-										class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-									>
-										<PlusIcon class="size-3" />
-									</button>
-								</div>
-							</div>
-
-							<!-- Children -->
-							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium text-gray-900"
-									>Child{{ searchParams.children > 1 ? "ren" : "" }}</span
-								>
-								<div class="flex items-center gap-2">
-									<button
-										type="button"
-										@click="decrementChildren"
-										:disabled="searchParams.children <= 0"
-										class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-									>
-										<MinusIcon class="size-3" />
-									</button>
-									<span class="w-8 text-center text-sm">{{
-										searchParams.children
-									}}</span>
-									<button
-										type="button"
-										@click="incrementChildren"
-										:disabled="searchParams.children >= 4"
-										class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
-									>
-										<PlusIcon class="size-3" />
-									</button>
-								</div>
-							</div>
-
-							<!-- Children Ages -->
-							<div
-								v-if="searchParams.children > 0"
-								class="border-t border-gray-100 pt-3"
+					<div class="space-y-4 pb-4">
+						<!-- Rooms -->
+						<div class="flex items-center justify-between">
+							<span class="text-sm font-medium text-gray-900"
+								>Room{{ searchParams.rooms > 1 ? "s" : "" }}</span
 							>
-								<div class="mb-3">
-									<span class="text-sm font-medium text-gray-900"
-										>Child Ages</span
+							<div class="flex items-center gap-2">
+								<button
+									type="button"
+									@click="decrementRooms"
+									:disabled="searchParams.rooms <= 1"
+									class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+								>
+									<MinusIcon class="size-3" />
+								</button>
+								<span class="w-8 text-center text-sm">{{
+									searchParams.rooms
+								}}</span>
+								<button
+									type="button"
+									@click="incrementRooms"
+									:disabled="searchParams.rooms >= 8"
+									class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+								>
+									<PlusIcon class="size-3" />
+								</button>
+							</div>
+						</div>
+
+						<!-- Adults -->
+						<div class="flex items-center justify-between">
+							<span class="text-sm font-medium text-gray-900"
+								>Adult{{ searchParams.adults > 1 ? "s" : "" }}</span
+							>
+							<div class="flex items-center gap-2">
+								<button
+									type="button"
+									@click="decrementAdults"
+									:disabled="searchParams.adults <= 1"
+									class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+								>
+									<MinusIcon class="size-3" />
+								</button>
+								<span class="w-8 text-center text-sm">{{
+									searchParams.adults
+								}}</span>
+								<button
+									type="button"
+									@click="incrementAdults"
+									:disabled="searchParams.adults >= 8"
+									class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+								>
+									<PlusIcon class="size-3" />
+								</button>
+							</div>
+						</div>
+
+						<!-- Children -->
+						<div class="flex items-center justify-between">
+							<span class="text-sm font-medium text-gray-900"
+								>Child{{ searchParams.children > 1 ? "ren" : "" }}</span
+							>
+							<div class="flex items-center gap-2">
+								<button
+									type="button"
+									@click="decrementChildren"
+									:disabled="searchParams.children <= 0"
+									class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+								>
+									<MinusIcon class="size-3" />
+								</button>
+								<span class="w-8 text-center text-sm">{{
+									searchParams.children
+								}}</span>
+								<button
+									type="button"
+									@click="incrementChildren"
+									:disabled="searchParams.children >= 4"
+									class="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+								>
+									<PlusIcon class="size-3" />
+								</button>
+							</div>
+						</div>
+
+						<!-- Children Ages -->
+						<div v-if="searchParams.children > 0">
+							<div class="mb-3">
+								<span class="text-sm font-medium text-gray-900"
+									>Child Ages</span
+								>
+								<p class="mt-1 text-xs text-gray-500">
+									Required for accurate pricing
+								</p>
+							</div>
+							<div class="space-y-2">
+								<div
+									v-for="(childAge, index) in childrenAges"
+									:key="index"
+									class="relative"
+								>
+									<select
+										v-model="childrenAges[index]"
+										@change="updateAgeOfChildrenString"
+										class="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 pr-8 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
 									>
-									<p class="mt-1 text-xs text-gray-500">
-										Required for accurate pricing
-									</p>
-								</div>
-								<div class="space-y-2">
+										<option value="" disabled class="text-gray-400">
+											Child {{ index + 1 }} age
+										</option>
+										<option
+											v-for="age in 7"
+											:key="age + 7"
+											:value="age + 7"
+											class="text-gray-900"
+										>
+											{{ age + 7 }} years old
+										</option>
+									</select>
 									<div
-										v-for="(childAge, index) in childrenAges"
-										:key="index"
-										class="relative"
+										class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
 									>
-										<select
-											v-model="childrenAges[index]"
-											@change="updateAgeOfChildrenString"
-											class="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 pr-8 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-										>
-											<option value="" disabled class="text-gray-400">
-												Child {{ index + 1 }} age
-											</option>
-											<option
-												v-for="age in 7"
-												:key="age + 7"
-												:value="age + 7"
-												class="text-gray-900"
-											>
-												{{ age + 7 }} years old
-											</option>
-										</select>
-										<div
-											class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-										>
-											<ChevronDownIcon class="h-4 w-4 text-gray-400" />
-										</div>
+										<ChevronDownIcon class="h-4 w-4 text-gray-400" />
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="border-t border-gray-100 px-4 py-2">
-						<button
-							type="button"
-							@click="onGuestSelectorDone"
-							class="w-full rounded bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
-						>
-							Done
-						</button>
-					</div>
+					<CommonButton
+						type="button"
+						@click="onGuestSelectorDone"
+						class="w-full !bg-gray-800"
+					>
+						Done
+					</CommonButton>
 				</div>
 			</div>
 
@@ -391,10 +384,7 @@
 									</div>
 
 									<!-- Children Ages -->
-									<div
-										v-if="searchParams.children > 0"
-										class="border-t border-gray-100 pt-3"
-									>
+									<div v-if="searchParams.children > 0">
 										<div class="mb-3">
 											<span class="text-sm font-medium text-gray-900"
 												>Child Ages</span
@@ -403,7 +393,7 @@
 												Required for accurate pricing
 											</p>
 										</div>
-										<div class="grid grid-cols-2 gap-2">
+										<div class="space-y-2 pb-4">
 											<div
 												v-for="(childAge, index) in childrenAges"
 												:key="index"
@@ -605,7 +595,6 @@ const updateUrlParams = () => {
 			...route.query,
 			rooms: searchParams.value.rooms,
 			adults: searchParams.value.adults,
-			children: searchParams.value.children,
 			age_of_children: searchParams.value.age_of_children || undefined,
 		},
 	})
@@ -633,16 +622,19 @@ watch(
 watch(
 	() => searchParams.value.age_of_children,
 	(newAgeString) => {
-		if (newAgeString && searchParams.value.children > 0) {
+		if (newAgeString && newAgeString.length > 0) {
 			const ages = newAgeString
 				.split(",")
 				.map((age) => age.trim())
 				.filter(Boolean)
-			childrenAges.value = Array(searchParams.value.children)
+			// Update children count based on age_of_children string
+			searchParams.value.children = ages.length
+			childrenAges.value = Array(ages.length)
 				.fill("")
 				.map((_, index) => ages[index] || "")
 		} else {
-			childrenAges.value = Array(searchParams.value.children).fill("")
+			searchParams.value.children = 0
+			childrenAges.value = []
 		}
 	},
 	{ immediate: true },

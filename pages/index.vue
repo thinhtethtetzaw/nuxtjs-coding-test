@@ -1,44 +1,15 @@
 <template>
 	<section>
-		<!-- Sticky Search Bar -->
-		<Transition
-			name="sticky-form"
-			enter-active-class="transition-all duration-500 ease-out"
-			leave-active-class="transition-all duration-300 ease-in"
-			enter-from-class="opacity-0 -translate-y-full"
-			enter-to-class="opacity-100 translate-y-0"
-			leave-from-class="opacity-100 translate-y-0"
-			leave-to-class="opacity-0 -translate-y-full"
-		>
-			<div
-				v-if="showStickyForm"
-				class="fixed top-0 right-0 left-0 z-50 mx-auto border-b border-gray-200 bg-white px-20 py-3 shadow-lg"
-			>
-				<form @submit.prevent="searchRooms" class="w-full">
-					<div class="flex items-center gap-3">
-						<div class="relative w-80 flex-shrink-0">
-							<FilterHotelsSearch
-								v-model="searchQuery"
-								@select="onHotelSelect"
-								:placeholder="
-									selectedHotel ? selectedHotel.hotel_name : 'Choose hotel...'
-								"
-								class="compact"
-							/>
-						</div>
-
-						<div class="flex-1">
-							<FilterRoomSearch
-								v-model="roomSearchParams"
-								:is-searching="isRoomSearching"
-								:is-compact="true"
-								@search="searchHotels"
-							/>
-						</div>
-					</div>
-				</form>
-			</div>
-		</Transition>
+		<CommonStickySearchBar
+			v-model="searchQuery"
+			:model-room-search-params="roomSearchParams"
+			:model-is-room-searching="isRoomSearching"
+			:model-selected-hotel="selectedHotel"
+			:show="showStickyForm"
+			@select-hotel="onHotelSelect"
+			@search-hotels="searchHotels"
+			@search-rooms="searchRooms"
+		/>
 
 		<!-- Banner -->
 		<div class="relative">
@@ -330,7 +301,6 @@ const roomSearchParams = reactive({
 	check_out: "",
 	rooms: 1,
 	adults: 2,
-	children: 0,
 	age_of_children: "",
 })
 
@@ -349,7 +319,6 @@ const updateUrlParams = () => {
 	query.checkout = roomSearchParams.check_out
 	query.rooms = roomSearchParams.rooms.toString()
 	query.adults = roomSearchParams.adults.toString()
-	query.children = roomSearchParams.children.toString()
 
 	// Only include ages if set
 	if (roomSearchParams.age_of_children) {

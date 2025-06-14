@@ -1,7 +1,17 @@
 <template>
+	<CommonStickySearchBar
+		v-model="searchQuery"
+		:model-room-search-params="roomSearchParams"
+		:model-is-room-searching="isRoomSearching"
+		:model-selected-hotel="selectedHotel"
+		:show="true"
+		@select-hotel="onHotelSelect"
+		@search-hotels="searchHotels"
+		@search-rooms="searchRooms"
+	/>
 	<div
 		v-if="isHotelDetailLoading"
-		class="flex h-96 items-center justify-center"
+		class="flex h-96 items-center justify-center pt-20"
 	>
 		<CommonSpinnerLoading :is-loading="true" />
 	</div>
@@ -14,7 +24,7 @@
 					search: hotelData.hotel_name,
 				},
 			}"
-			class="mb-5 flex items-center gap-2 text-base text-gray-700"
+			class="mt-12 mb-5 flex items-center gap-2 text-base text-gray-700"
 		>
 			<ChevronLeftIcon class="size-5" /> Back to Hotels
 		</NuxtLink>
@@ -188,6 +198,16 @@ const route = useRoute()
 const isPhotoGalleryOpen = ref(false)
 const showAllAmenities = ref(false)
 const activeTab = ref("overview")
+const searchQuery = ref("")
+const selectedHotel = ref(null)
+const roomSearchParams = reactive({
+	check_in: "",
+	check_out: "",
+	rooms: 1,
+	adults: 2,
+	age_of_children: "",
+})
+const isRoomSearching = ref(false)
 
 const {
 	data: hotel,
@@ -278,4 +298,15 @@ const tabs = [
 	{ key: "policies", label: "Policies" },
 	{ key: "contact", label: "Contact Information" },
 ]
+
+const onHotelSelect = (hotel) => {
+	selectedHotel.value = hotel
+	searchQuery.value = hotel.hotel_name
+}
+const searchHotels = () => {
+	// Implement hotel search logic or leave as stub
+}
+const searchRooms = () => {
+	// Implement room search logic or leave as stub
+}
 </script>

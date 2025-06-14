@@ -514,6 +514,18 @@ const onHotelSelect = (hotel) => {
 	roomSearchResults.value = []
 	roomSearchError.value = ""
 	updateUrlParams()
+	if (hotel && hotel.slug) {
+		searchQuery.value = hotel.hotel_name
+		router.push({
+			path: `/hotels/${hotel.slug}`,
+			query: {
+				...route.query,
+				hotel: hotel.slug,
+				search: hotel.hotel_name,
+			},
+		})
+		selectedHotel.value = hotel
+	}
 }
 
 const selectHotelForBooking = (hotel) => {

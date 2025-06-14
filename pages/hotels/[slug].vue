@@ -7,7 +7,14 @@
 	</div>
 	<div v-else class="min-h-screen">
 		<NuxtLink
-			to="/"
+			:to="{
+				path: '/',
+				query: {
+					...route.query,
+					search: hotelData.hotel_name,
+					hotel: route.params.slug,
+				},
+			}"
 			class="mb-5 flex items-center gap-2 text-base text-gray-700"
 		>
 			<ChevronLeftIcon class="size-5" /> Back to Hotels

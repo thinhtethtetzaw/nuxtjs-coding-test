@@ -32,7 +32,7 @@
 								v-model="roomSearchParams"
 								:is-searching="isRoomSearching"
 								:is-compact="true"
-								@search="searchRooms"
+								@search="searchHotels"
 							/>
 						</div>
 					</div>
@@ -79,7 +79,7 @@
 						<FilterRoomSearch
 							v-model="roomSearchParams"
 							:is-searching="isRoomSearching"
-							@search="searchRooms"
+							@search="searchHotels"
 						/>
 					</div>
 				</div>
@@ -239,6 +239,7 @@
 
 		<!-- Hotel List -->
 		<div
+			v-if="!isRoomSearching"
 			class="mx-auto mt-48 grid grid-cols-12 gap-6"
 			:class="{ '': showStickyForm }"
 		>
@@ -520,7 +521,6 @@ const onHotelSelect = (hotel) => {
 			path: `/hotels/${hotel.slug}`,
 			query: {
 				...route.query,
-				hotel: hotel.slug,
 				search: hotel.hotel_name,
 			},
 		})
@@ -650,6 +650,31 @@ const searchRooms = async () => {
 		console.error("Room search error:", error)
 		roomSearchError.value =
 			error.data?.message || "Failed to search rooms. Please try again."
+	} finally {
+		isRoomSearching.value = false
+	}
+}
+
+const searchHotels = async () => {
+	isRoomSearching.value = true
+	roomSearchError.value = ""
+	roomSearchResults.value = []
+
+	try {
+		const response = await $fetch("/api/hotels/custom-search", {
+			method: "POST",
+			body: {
+				search: searchQuery.value,
+			},
+		})
+
+		if (response.data) {
+			hotels.value = response
+		}
+	} catch (error) {
+		console.error("Hotel search error:", error)
+		roomSearchError.value =
+			error.data?.message || "Failed to search hotels. Please try again."
 	} finally {
 		isRoomSearching.value = false
 	}

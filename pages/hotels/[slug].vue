@@ -12,7 +12,6 @@
 				query: {
 					...route.query,
 					search: hotelData.hotel_name,
-					hotel: route.params.slug,
 				},
 			}"
 			class="mb-5 flex items-center gap-2 text-base text-gray-700"

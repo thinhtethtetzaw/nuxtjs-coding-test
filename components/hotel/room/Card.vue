@@ -5,7 +5,7 @@
 			<HotelRoomGallery
 				:images="room.gallery"
 				:room-name="room.room_type"
-				@open-gallery="openRoomGallery"
+				@open-gallery="toggleRoomGallery"
 			/>
 			<div class="flex-1 space-y-4">
 				<h4 class="mb-3 text-xl font-semibold text-gray-900">
@@ -32,7 +32,7 @@
 					</div>
 					<CommonButton
 						v-if="room.amenities?.length > 2"
-						@click="openRoomGallery"
+						@click="toggleRoomGallery"
 						variant="ghost"
 						class="p-0 underline"
 					>
@@ -87,7 +87,7 @@
 						</div>
 						<CommonButton
 							v-if="ratePlan.benefits?.length > 2"
-							@click="openRoomGallery"
+							@click="toggleRoomGallery"
 							variant="ghost"
 							class="p-0 text-xs underline"
 						>
@@ -110,28 +110,97 @@
 			:is-open="isRoomGalleryOpen"
 			:images="room.gallery"
 			:room="room"
-			@close="closeRoomGallery"
+			@close="toggleRoomGallery"
+		/>
+		<HotelRoomCapacityExceededModal
+			:is-open="isCapacityModalOpen"
+			:room-name="room.room_type"
+			:max-occupancy="room.max_occupancy"
+			:total-guests="totalGuests"
+			:exceeded-info="room.exceeded"
+			@close="toggleCapacityModal"
+			@search-new-rooms="handleSearchNewRooms"
+		/>
+
+		<CommonConfirmationModal
+			:is-open="isBookingConfirmModalOpen"
+			title="Booking Confirmation"
+			description="Are you sure you want to book this room?"
+			@close="toggleBookingConfirmModal"
+			@confirm="handleBookingConfirmed"
+		/>
+		<CommonToast
+			:is-visible="isToastVisible"
+			message="Room booked successfully!"
 		/>
 	</div>
 </template>
 
 <script setup>
 import { UsersIcon, RulerIcon, CheckIcon } from "lucide-vue-next"
+import { useUrlParams } from "~/composables/useUrlParams"
 
 // Props
 const props = defineProps({
 	room: { type: Object, required: true },
 })
 
+const router = useRouter()
+const route = useRoute()
+
+const { getParam } = useUrlParams({
+	adults: null,
+	children: null,
+	rooms: null,
+})
+
 const isRoomGalleryOpen = ref(false)
-const openRoomGallery = () => {
-	isRoomGalleryOpen.value = true
-}
-const closeRoomGallery = () => {
-	isRoomGalleryOpen.value = false
+const isCapacityModalOpen = ref(false)
+const isBookingConfirmModalOpen = ref(false)
+const isToastVisible = ref(false)
+
+const toggleRoomGallery = () => {
+	isRoomGalleryOpen.value = !isRoomGalleryOpen.value
 }
 
+const toggleCapacityModal = () => {
+	isCapacityModalOpen.value = !isCapacityModalOpen.value
+}
+
+const toggleBookingConfirmModal = () => {
+	isBookingConfirmModalOpen.value = !isBookingConfirmModalOpen.value
+}
+
+const handleBookingConfirmed = () => {
+	toggleBookingConfirmModal()
+	isToastVisible.value = true
+	setTimeout(() => {
+		isToastVisible.value = false
+	}, 3000)
+}
+
+// Calculate total guests from URL parameters
+const totalGuests = computed(() => {
+	const adults = parseInt(getParam("adults")) || 2
+	const children = parseInt(getParam("children")) || 0
+	return adults + children
+})
+
 const handleBookNow = () => {
-	console.log("Book Now")
+	if (props.room.exceeded?.is_exceeded) {
+		toggleCapacityModal()
+	} else {
+		toggleBookingConfirmModal()
+	}
+}
+
+const handleSearchNewRooms = () => {
+	toggleCapacityModal()
+	router.push({
+		path: "/",
+		query: {
+			...route.query,
+		},
+	})
 }
 </script>

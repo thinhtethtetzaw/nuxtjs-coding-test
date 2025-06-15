@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { CalendarXIcon, StarHalfIcon, StarIcon } from "lucide-vue-next"
-const props = defineProps({
-	hotel: {
-		type: Object,
-		required: true,
-	},
-})
-</script>
-
 <template>
 	<div class="grid grid-cols-13 overflow-hidden rounded-lg border">
 		<NuxtImg
@@ -58,10 +48,30 @@ const props = defineProps({
 					</div>
 					<p class="text-muted-foreground text-xs">2 adults / 2 nights</p>
 				</div>
-				<NuxtLink :to="`/hotels/${hotel.slug}`">
+				<NuxtLink
+					:to="{
+						path: `/hotels/${hotel.slug}`,
+						query: {
+							...route.query,
+						},
+					}"
+				>
 					<CommonButton>See availability</CommonButton>
 				</NuxtLink>
 			</div>
 		</div>
 	</div>
 </template>
+
+<script setup lang="ts">
+import { CalendarXIcon, StarHalfIcon, StarIcon } from "lucide-vue-next"
+
+const route = useRoute()
+
+const props = defineProps({
+	hotel: {
+		type: Object,
+		required: true,
+	},
+})
+</script>

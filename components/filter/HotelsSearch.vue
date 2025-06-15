@@ -1,111 +1,100 @@
 <template>
-	<div class="w-full">
+	<div class="w-full" @blur="onSearchBlur">
 		<input
-			:value="modelValue"
+			:value="getParam('search')"
 			type="text"
 			placeholder="Search hotels..."
 			class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none"
 			@input="onInputChange"
 			@keydown.enter.prevent="onSearchSubmit"
-			@focus="onInputFocus"
-			@blur="onInputBlur"
 		/>
 
-		<FilterHotelsResults
-			:results="state.searchResults"
-			:is-visible="isResultsVisible"
-			:search-query="state.searchQuery"
-			@select="onResultSelect"
-			:is-loading="state.isLoading"
-		/>
+		<div
+			v-if="isLoading && isResultsVisible"
+			class="absolute z-10 mt-1 max-h-72 min-h-20 w-full overflow-auto rounded-lg border border-gray-200 bg-white p-4 py-6 text-center text-gray-500 shadow-lg"
+		>
+			<CommonSpinnerLoading :is-loading="true" />
+		</div>
+
+		<div
+			v-else-if="isResultsVisible && searchResults?.data?.length"
+			class="absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+		>
+			<div
+				v-for="result in searchResults?.data"
+				:key="result.id || result.slug"
+				class="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 last:border-b-0 hover:bg-blue-50"
+				@click="onSelect(result)"
+			>
+				<div class="flex-1">
+					<div class="font-medium text-gray-900">
+						{{ result.hotel_name }}
+					</div>
+					<div
+						v-if="result.city_name || result.country_name"
+						class="text-gray-500"
+					>
+						{{ result.city_name }} {{ result.country_name }}
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
-<script setup>
-const props = defineProps({
-	modelValue: {
-		type: String,
-		required: true,
-	},
+<script setup lang="ts">
+import { useUrlParams } from "~/composables/useUrlParams"
+import { useDebounceFn } from "@vueuse/core"
+
+const route = useRoute()
+const router = useRouter()
+
+const { getParam, setParam } = useUrlParams<{ search: string | null }>({
+	search: null,
+})
+const isResultsVisible = ref(false)
+
+const searchBody = computed(() => {
+	const search = getParam("search")
+	return search?.trim() ? { search: search.trim() } : undefined
 })
 
-const emit = defineEmits(["update:modelValue", "select", "search"])
-
-const state = reactive({
-	searchResults: [],
-	isLoading: false,
-	isInputFocused: false,
-	searchQuery: "",
+const {
+	data: searchResults,
+	execute,
+	pending: isLoading,
+} = useFetch("/api/hotels/search", {
+	method: "POST",
+	body: searchBody,
+	lazy: true,
+	immediate: false,
+	$fetch: useNuxtApp().$api,
 })
 
-let searchDebounceTimer = null
-let hasUserTyped = false
+const debouncedExecute = useDebounceFn(() => {
+	execute()
+	isResultsVisible.value = true
+}, 1000)
 
-const { data, execute } = useLazyApi(
-	"/api/hotels/search",
-	{
-		method: "POST",
-	},
-	computed(() => ({ search: state.searchQuery })),
-)
-
-const onInputChange = (event) => {
-	hasUserTyped = true
-	emit("update:modelValue", event.target.value)
-}
-
-const onInputFocus = () => {
-	state.isInputFocused = true
-}
-
-const onInputBlur = () => {
-	setTimeout(() => {
-		state.isInputFocused = false
-	}, 200)
-}
-
-const onResultSelect = (result) => {
-	emit("select", result)
-	state.isInputFocused = false
-	state.searchResults = []
-	hasUserTyped = false
+const onInputChange = (e: Event) => {
+	const target = e.target as HTMLInputElement
+	setParam("search", target.value)
+	debouncedExecute()
 }
 
 const onSearchSubmit = () => {
-	emit("search", state.searchResults)
+	execute()
+	isResultsVisible.value = true
 }
 
-const fetchSearchResults = async (query) => {
-	if (!query.trim()) {
-		state.searchResults = []
-		state.isInputFocused = false
-		return
-	}
-	state.isLoading = true
-	try {
-		state.searchQuery = query
-		await execute()
-		state.searchResults = data.value?.data || []
-		state.isInputFocused = true
-	} catch (error) {
-		state.searchResults = []
-		state.isInputFocused = true
-	}
-	state.isLoading = false
+const onSelect = (result: string) => {
+	router.push({
+		path: `/hotels/${result.slug}`,
+		query: { ...route.query, search: result.hotel_name },
+	})
 }
 
-watch(
-	() => props.modelValue,
-	(newValue) => {
-		if (!hasUserTyped) return
-		if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
-		searchDebounceTimer = setTimeout(() => {
-			fetchSearchResults(newValue)
-		}, 300)
-	},
-)
-
-const isResultsVisible = computed(() => {
-	return state.isInputFocused && state.searchResults.length > 0
-})
+const onSearchBlur = () => {
+	isResultsVisible.value = false
+}
 </script>

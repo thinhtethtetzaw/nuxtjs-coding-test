@@ -1,14 +1,5 @@
 <template>
-	<CommonStickySearchBar
-		v-model="searchQuery"
-		:model-room-search-params="roomSearchParams"
-		:model-is-room-searching="isRoomSearching"
-		:model-selected-hotel="selectedHotel"
-		:show="true"
-		@select-hotel="onHotelSelect"
-		@search-hotels="searchHotels"
-		@search-rooms="searchRooms"
-	/>
+	<CommonStickySearchBar :show="true" />
 	<div
 		v-if="isHotelDetailLoading"
 		class="flex h-96 items-center justify-center pt-20"
@@ -19,23 +10,20 @@
 		<NuxtLink
 			:to="{
 				path: '/',
-				query: {
-					...route.query,
-					search: hotelData.hotel_name,
-				},
+				query: route.query,
 			}"
 			class="mt-12 mb-5 flex items-center gap-2 text-base text-gray-700"
 		>
 			<ChevronLeftIcon class="size-5" /> Back to Hotels
 		</NuxtLink>
 
-		<div v-if="hotelData.hotel_name" class="space-y-6">
+		<div v-if="hotelDetailData.hotel_name" class="space-y-6">
 			<div
 				class="flex items-start justify-between rounded-xl border border-gray-200 p-6"
 			>
 				<div class="flex-1">
 					<h1 class="mb-2 text-3xl font-semibold text-gray-700">
-						{{ hotelData.hotel_name }}
+						{{ hotelDetailData.hotel_name }}
 					</h1>
 					<div class="mb-4 flex items-center gap-4">
 						<div class="flex items-center gap-2">
@@ -44,7 +32,7 @@
 									v-for="n in 5"
 									:key="'star-' + n"
 									:class="[
-										n <= Math.floor(Number(hotelData.rating))
+										n <= Math.floor(Number(hotelDetailData.rating))
 											? 'fill-yellow-400 text-yellow-400'
 											: 'fill-gray-300 text-gray-300',
 										'h-4 w-4',
@@ -54,21 +42,22 @@
 						</div>
 					</div>
 					<p class="flex items-center gap-1 text-gray-600">
-						{{ hotelData.address?.[0]?.cityName }}
+						{{ hotelDetailData.address?.[0]?.cityName }}
 					</p>
 				</div>
 				<div class="text-right">
 					<div class="mb-2 flex items-center gap-2">
 						<span class="text-2xl font-bold text-gray-900"
-							>{{ hotelData.currency }} {{ hotelData.avg_price }}</span
+							>{{ hotelDetailData.currency }}
+							{{ hotelDetailData.avg_price }}</span
 						>
 					</div>
 				</div>
 			</div>
 
 			<HotelImageGallery
-				:images="hotelData.gallery_all"
-				:hotel-name="hotelData.hotel_name"
+				:images="hotelDetailData.gallery_all"
+				:hotel-name="hotelDetailData.hotel_name"
 				@open-gallery="togglePhotoGallery"
 			/>
 
@@ -80,8 +69,8 @@
 						<div class="grid grid-cols-3 gap-6">
 							<div
 								v-for="amenity in showAllAmenities
-									? hotelData.amenities
-									: hotelData.amenities?.slice(0, 6)"
+									? hotelDetailData.amenities
+									: hotelDetailData.amenities?.slice(0, 6)"
 								:key="amenity.id"
 								class="flex items-center gap-3"
 							>
@@ -91,7 +80,7 @@
 						</div>
 						<CommonButton
 							variant="ghost"
-							v-if="hotelData.amenities?.length > 6"
+							v-if="hotelDetailData.amenities?.length > 6"
 							@click="toggleAmenities"
 							class="text-primary mt-6 !px-0 font-medium hover:text-blue-400"
 						>
@@ -107,24 +96,24 @@
 						<template #default="{ activeTab }">
 							<HotelTabOverview
 								v-if="activeTab === 'overview'"
-								:hotelData="hotelData"
+								:hotelData="hotelDetailData"
 							/>
 							<HotelTabRooms
 								v-else-if="activeTab === 'rooms'"
-								:hotelData="hotelData"
+								:hotelData="hotelDetailData"
 							/>
 							<HotelTabAmenities
 								v-else-if="activeTab === 'amenities'"
-								:hotelData="hotelData"
+								:hotelData="hotelDetailData"
 							/>
 							<HotelTabPolicies
 								v-else-if="activeTab === 'policies'"
-								:hotelData="hotelData"
+								:hotelData="hotelDetailData"
 								:getPaymentMethodName="getPaymentMethodName"
 							/>
 							<HotelTabContact
 								v-else-if="activeTab === 'contact'"
-								:hotelData="hotelData"
+								:hotelData="hotelDetailData"
 							/>
 						</template>
 					</HotelTabWrapper>
@@ -133,8 +122,8 @@
 				<!-- Right Column -->
 				<div class="sticky top-6 col-span-4 space-y-4 self-start">
 					<HotelMap
-						:latitude="hotelData.position?.latitude"
-						:longitude="hotelData.position?.longitude"
+						:latitude="hotelDetailData.position?.latitude"
+						:longitude="hotelDetailData.position?.longitude"
 					/>
 
 					<div class="flex flex-col items-start gap-3">
@@ -143,9 +132,9 @@
 								Hotel Address
 							</p>
 							<p class="leading-relaxed text-gray-700">
-								{{ hotelData.address?.[0]?.cityName }},
-								{{ hotelData.address?.[0]?.stateProv }}<br />
-								Postal Code: {{ hotelData.address?.[0]?.postalCode }}
+								{{ hotelDetailData.address?.[0]?.cityName }},
+								{{ hotelDetailData.address?.[0]?.stateProv }}<br />
+								Postal Code: {{ hotelDetailData.address?.[0]?.postalCode }}
 							</p>
 						</div>
 						<div class="flex w-full gap-2">
@@ -174,8 +163,8 @@
 
 		<HotelPhotoGalleryModal
 			:is-open="isPhotoGalleryOpen"
-			:images="hotelData.gallery_all"
-			:hotel-name="hotelData.hotel_name"
+			:images="hotelDetailData.gallery_all"
+			:hotel-name="hotelDetailData.hotel_name"
 			@close="togglePhotoGallery"
 		/>
 	</div>
@@ -213,19 +202,19 @@ const {
 	data: hotel,
 	pending: isHotelDetailLoading,
 	error,
-} = useApi(`/api/hotels/${route.params.slug}`, {
+	refresh,
+} = useFetch(`/api/hotels/${route.params.slug}`, {
 	method: "POST",
-	key: `hotel-details-${route.params.slug}`,
-	cache: true,
+	lazy: false,
 	immediate: true,
-	watch: false,
+	$fetch: useNuxtApp().$api,
 })
 
-const hotelData = computed(() => hotel.value?.data || {})
+const hotelDetailData = computed(() => hotel.value?.data || {})
 
 const getDirections = () => {
-	const lat = hotelData.value.position?.latitude
-	const lng = hotelData.value.position?.longitude
+	const lat = hotelDetailData.value.position?.latitude
+	const lng = hotelDetailData.value.position?.longitude
 	if (lat && lng) {
 		const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
 		window.open(url, "_blank")
@@ -233,7 +222,7 @@ const getDirections = () => {
 }
 
 const copyAddress = async () => {
-	const address = hotelData.value.address?.[0]
+	const address = hotelDetailData.value.address?.[0]
 	if (address) {
 		const fullAddress = `${address.addressLine}, ${address.cityName}, ${address.stateProv}, ${address.postalCode}`
 	}
@@ -299,14 +288,26 @@ const tabs = [
 	{ key: "contact", label: "Contact Information" },
 ]
 
-const onHotelSelect = (hotel) => {
-	selectedHotel.value = hotel
-	searchQuery.value = hotel.hotel_name
+function initializeFromUrl() {
+	const query = route.query
+
+	if (query.search) searchQuery.value = String(query.search)
+	if (query.checkin) roomSearchParams.check_in = String(query.checkin)
+	if (query.checkout) roomSearchParams.check_out = String(query.checkout)
+	if (query.rooms) roomSearchParams.rooms = parseInt(query.rooms) || 1
+	if (query.adults) roomSearchParams.adults = parseInt(query.adults) || 2
+	if (query.ages) roomSearchParams.age_of_children = String(query.ages)
 }
-const searchHotels = () => {
-	// Implement hotel search logic or leave as stub
-}
-const searchRooms = () => {
-	// Implement room search logic or leave as stub
-}
+
+onMounted(() => {
+	initializeFromUrl()
+})
+
+watch(
+	() => route.query,
+	() => {
+		initializeFromUrl()
+	},
+	{ deep: true },
+)
 </script>

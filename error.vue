@@ -87,14 +87,18 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router"
+
 const props = defineProps({
 	error: Object,
 })
 
+const router = useRouter()
+
 const handleError = () => {
 	clearError()
 	if (props.error.statusCode === 404) {
-		navigateTo("/")
+		router.push("/")
 	} else {
 		window.location.reload()
 	}

@@ -50,7 +50,6 @@
 
 <script setup>
 import { StarIcon, StarHalfIcon } from "lucide-vue-next"
-import { useRoute, navigateTo } from "vue-router"
 
 const props = defineProps({
 	hotel: {
@@ -60,9 +59,10 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const router = useRouter()
 
 const viewDetails = () => {
-	navigateTo({
+	router.push({
 		path: `/hotels/${props.hotel.slug}`,
 		query: {
 			...route.query,

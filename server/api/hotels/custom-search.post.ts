@@ -58,7 +58,6 @@ interface ApiResponse {
 export default defineEventHandler(async (event) => {
 	try {
 		const body = await readBody(event)
-		console.log("Custom search request body:", body)
 
 		const searchResponse = await $fetch<ApiResponse>(
 			"https://api.onlynx.co.th/api/v1/ct-hotels/search",

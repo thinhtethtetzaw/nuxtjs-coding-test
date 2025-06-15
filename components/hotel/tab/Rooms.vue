@@ -1,11 +1,5 @@
 <template>
 	<div class="min-h-screen">
-		<!-- Room Search Form -->
-		<CommonRoomSearchForm
-			@search="handleRoomSearch"
-			@error="handleSearchError"
-		/>
-
 		<!-- Loading -->
 		<div v-if="isSearching" class="flex items-center justify-center py-12">
 			<div class="text-center">
@@ -276,6 +270,13 @@ const capacityMessage = ref("")
 const selectedRoomCapacity = ref(0)
 const totalGuests = ref(0)
 const currentSearchParams = ref(null)
+
+const roomPayload = {
+	hotel: route.params.slug,
+	rooms: currentSearchParams.value?.rooms || 1,
+	adults: currentSearchParams.value?.adults || 2,
+	age_of_children: currentSearchParams.value?.age_of_children || "",
+}
 
 // Computed properties
 const displayRooms = computed(() => {

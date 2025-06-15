@@ -1,26 +1,26 @@
 <template>
-	<div class="space-y-2">
-		<h3 class="font-semibold">Amenities</h3>
-		<div class="flex flex-wrap gap-2">
-			<div
-				v-for="amenity in amenities"
-				:key="amenity.id"
-				class="flex items-center"
-			>
-				<input
-					type="checkbox"
-					:id="'amenity-' + amenity.id"
-					:value="amenity.id"
-					:checked="modelValue.includes(amenity.id)"
-					@change="updateAmenities(amenity.id)"
-					class="peer hidden"
-				/>
-				<label
-					:for="'amenity-' + amenity.id"
-					class="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-1 text-gray-700 transition-all duration-150 select-none peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white hover:border-blue-400 hover:bg-blue-50"
-				>
-					{{ amenity.name }}
-				</label>
+	<div class="flex flex-col gap-y-6">
+		<h3 class="text-base font-semibold">Popular Amenities</h3>
+		<div class="flex flex-col gap-3">
+			<div v-for="amenity in amenities" :key="amenity.id">
+				<div class="flex items-center justify-between gap-x-1">
+					<div class="flex items-center gap-x-2">
+						<ui-checkbox
+							:id="'amenity-' + amenity.id"
+							:model-value="modelValue.includes(amenity.id)"
+							:value="amenity.id"
+							:checked="modelValue.includes(amenity.id)"
+							@update:model-value="updateAmenities(amenity.id)"
+						/>
+						<label
+							:for="'amenity-' + amenity.id"
+							class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						>
+							{{ amenity.name }}
+						</label>
+					</div>
+					<p class="text-muted-foreground text-xs">({{ amenity.count }})</p>
+				</div>
 			</div>
 		</div>
 	</div>

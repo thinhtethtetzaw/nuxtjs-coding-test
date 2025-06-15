@@ -87,8 +87,8 @@
 							adjusting your filters or search for a different location.
 						</p>
 					</div>
-					<div v-else class="grid grid-cols-3 gap-4">
-						<HotelCard
+					<div v-else class="flex flex-col gap-y-8">
+						<HotelCardTemp
 							v-for="hotel in filteredHotels.data"
 							:key="hotel.id || hotel.slug"
 							:hotel="hotel"
@@ -135,7 +135,13 @@ const availableAmenities = computed(() => {
 	hotels.value.data.forEach((hotel) => {
 		hotel.amenities?.forEach((amenity) => {
 			if (!amenitiesMap.has(amenity.id)) {
-				amenitiesMap.set(amenity.id, amenity)
+				amenitiesMap.set(amenity.id, { ...amenity, count: 1 })
+			} else {
+				const existingAmenity = amenitiesMap.get(amenity.id)
+				amenitiesMap.set(amenity.id, {
+					...existingAmenity,
+					count: existingAmenity.count + 1,
+				})
 			}
 		})
 	})

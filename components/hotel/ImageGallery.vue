@@ -3,7 +3,7 @@
 		<div class="flex h-[400px] gap-3">
 			<!-- Main Image -->
 			<div class="group relative flex-1 overflow-hidden rounded-xl">
-				<img
+				<NuxtImg
 					:src="images?.[0]?.url || '/placeholder-hotel.jpg'"
 					:alt="hotelName"
 					class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -17,7 +17,7 @@
 			<div class="grid flex-1 grid-cols-2 gap-3">
 				<!-- First side image -->
 				<div class="group relative overflow-hidden rounded-xl">
-					<img
+					<NuxtImg
 						:src="images?.[1]?.url || '/placeholder-hotel.jpg'"
 						:alt="hotelName"
 						class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -29,7 +29,7 @@
 
 				<!-- Second side image -->
 				<div class="group relative overflow-hidden rounded-xl">
-					<img
+					<NuxtImg
 						:src="images?.[2]?.url || '/placeholder-hotel.jpg'"
 						:alt="hotelName"
 						class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -41,7 +41,7 @@
 
 				<!-- Third side image -->
 				<div class="group relative overflow-hidden rounded-xl">
-					<img
+					<NuxtImg
 						:src="images?.[3]?.url || '/placeholder-hotel.jpg'"
 						:alt="hotelName"
 						class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -57,7 +57,7 @@
 					@click="$emit('openGallery')"
 				>
 					<!-- Background image (5th image) with low opacity -->
-					<img
+					<NuxtImg
 						:src="
 							images?.[4]?.url || images?.[1]?.url || '/placeholder-hotel.jpg'
 						"

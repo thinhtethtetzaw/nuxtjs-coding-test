@@ -36,7 +36,7 @@
 								class="group animate-slide-up relative aspect-square overflow-hidden rounded-xl bg-gray-900 opacity-0 shadow-lg transition-all duration-300 hover:scale-105"
 								:style="{ 'animation-delay': `${index * 50}ms` }"
 							>
-								<img
+								<NuxtImg
 									:src="image.url"
 									:alt="`${hotelName} - Photo ${index + 1}`"
 									class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"

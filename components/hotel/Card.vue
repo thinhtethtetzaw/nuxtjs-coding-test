@@ -2,7 +2,7 @@
 	<div
 		class="mb-2 flex flex-col overflow-hidden rounded-2xl border border-gray-200 transition-all duration-200"
 	>
-		<img
+		<NuxtImg
 			:src="hotel.gallery_all?.[0]?.url || '/placeholder-hotel.jpg'"
 			:alt="hotel.hotel_name"
 			class="h-52 w-full object-cover"

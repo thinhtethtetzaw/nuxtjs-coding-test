@@ -11,7 +11,7 @@
 				class="relative mb-[-60px] h-[60vh] overflow-hidden rounded-3xl p-28 before:absolute before:inset-0 before:bg-black/40 before:content-['']"
 			>
 				<img
-					src="/images/hotel-banner.png"
+					:src="bannerImage"
 					alt="banner"
 					class="absolute inset-0 -z-1 h-full w-full object-cover"
 				/>
@@ -114,6 +114,7 @@ import {
 	CheckIcon,
 } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
+import bannerImage from "~/assets/images/hotel-banner.png"
 
 const { getParam, setParam } = useUrlParams()
 
@@ -148,7 +149,6 @@ const {
 	data: hotels,
 	pending: isHotelsLoading,
 	error,
-	refresh,
 } = useFetch("/api/hotels", {
 	method: "POST",
 	lazy: false,

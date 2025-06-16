@@ -54,6 +54,7 @@ import { SearchIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { useDebounceFn } from "@vueuse/core"
 import type { THotelSearch } from "~/types"
+import { useHotelSearch } from "~/composables/useHotelSearch"
 
 const route = useRoute()
 const router = useRouter()
@@ -79,19 +80,12 @@ const searchBody = computed(() => {
 
 const {
 	data: searchResults,
-	execute,
-	pending: isLoading,
-} = useFetch<THotelSearch>("/api/hotels/search", {
-	method: "POST",
-	body: searchBody,
-	lazy: true,
-	immediate: false,
-})
-
-console.log("searchResultsData", searchResults.value?.data)
+	loading: isLoading,
+	executeSearch,
+} = useHotelSearch()
 
 const debouncedExecute = useDebounceFn(() => {
-	execute()
+	executeSearch(searchBody.value)
 	isResultsVisible.value = true
 }, 1000)
 
@@ -103,7 +97,7 @@ const onInputChange = (e: Event) => {
 }
 
 const onSearchSubmit = () => {
-	execute()
+	executeSearch(searchBody.value)
 	isResultsVisible.value = true
 }
 

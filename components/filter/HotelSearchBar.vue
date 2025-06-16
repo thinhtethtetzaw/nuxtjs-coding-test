@@ -224,6 +224,7 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from "dayjs"
 import { SearchIcon, MapPinIcon, XIcon } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -235,10 +236,9 @@ import {
 } from "@/components/ui/popover"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { useDebounceFn } from "@vueuse/core"
-import type { THotelSearch } from "~/types"
-import dayjs from "dayjs"
 import { createUrlParamComputed, createDateParamComputed } from "~/utils"
 import { parseDate } from "@internationalized/date"
+import { useHotelSearch } from "~/composables/useHotelSearch"
 
 const route = useRoute()
 const router = useRouter()
@@ -268,17 +268,12 @@ const searchBody = computed(() => {
 
 const {
 	data: searchResults,
-	execute,
-	pending: isLoading,
-} = useFetch<THotelSearch>("/api/hotels/search", {
-	method: "POST",
-	body: searchBody,
-	lazy: true,
-	immediate: false,
-})
+	loading: isLoading,
+	executeSearch,
+} = useHotelSearch()
 
 const debouncedExecute = useDebounceFn(() => {
-	execute()
+	executeSearch(searchBody.value)
 	showSearchResults.value = true
 }, 1000)
 
@@ -303,7 +298,7 @@ const onInputChange = (e: Event) => {
 }
 
 const onSearchSubmit = () => {
-	execute()
+	executeSearch(searchBody.value)
 	showSearchResults.value = true
 }
 

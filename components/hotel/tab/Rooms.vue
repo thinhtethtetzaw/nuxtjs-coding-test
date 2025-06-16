@@ -25,26 +25,21 @@
 
 <script setup>
 import { AlertTriangleIcon } from "lucide-vue-next"
+import { useGetRooms } from "~/composables/useGetRooms"
 
 const route = useRoute()
 const { getParam } = useUrlParams()
 
-const {
-	data: rooms,
-	pending: isRoomsLoading,
-	error,
-} = useFetch(`/api/hotels/${route.params.slug}/rooms`, {
-	method: "POST",
-	lazy: false,
-	immediate: true,
-	body: {
+const { data: rooms, error, loading: isRoomsLoading, getRooms } = useGetRooms()
+
+onMounted(() => {
+	getRooms(route.params.slug, {
 		check_in: getParam("check_in"),
 		check_out: getParam("check_out"),
 		rooms: getParam("rooms"),
 		adults: getParam("adults"),
 		age_of_children: getParam("age_of_children"),
-	},
-	$fetch: useNuxtApp().$api,
+	})
 })
 
 const roomsData = computed(() => rooms.value?.data?.rooms || [])

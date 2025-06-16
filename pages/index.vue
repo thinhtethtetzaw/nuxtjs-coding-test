@@ -41,7 +41,7 @@
 			<div class="col-span-3">
 				<div class="sticky top-24">
 					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
-					<div v-if="isHotelsLoading">
+					<div v-if="isGetAllHotelsLoading || isCustomSearchLoading">
 						<CommonSkeletonLoading />
 					</div>
 					<div v-else class="flex flex-col gap-6">
@@ -55,12 +55,12 @@
 			</div>
 			<div class="col-span-9 px-4">
 				<div
-					v-if="isHotelsLoading"
+					v-if="isGetAllHotelsLoading || isCustomSearchLoading"
 					class="flex items-center justify-center py-10"
 				>
 					<CommonSpinnerLoading :is-loading="true" />
 				</div>
-				<div v-if="!isHotelsLoading">
+				<div v-if="!isGetAllHotelsLoading && !isCustomSearchLoading">
 					<h2 class="mb-4 text-2xl font-bold">Discover Our Collection</h2>
 					<div
 						v-if="filteredHotels.data.length === 0"
@@ -94,19 +94,32 @@
 import { HotelIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import bannerImage from "~/assets/images/hotel-banner.png"
+import { useCustomHotelSearch } from "~/composables/useCustomHotelSearch"
+import { useGetAllHotels } from "~/composables/useGetAllHotels"
 
 const { getParam } = useUrlParams()
 
 const showStickyForm = ref(false)
 const bannerFormRef = ref(null)
 const hotels = ref([])
-const isHotelsLoading = ref(false)
 
 const filters = ref({
 	priceMin: null,
 	priceMax: null,
 	selectedAmenities: [],
 })
+
+const {
+	data: customSearchData,
+	loading: isCustomSearchLoading,
+	searchHotels,
+} = useCustomHotelSearch()
+
+const {
+	data: allHotelsData,
+	loading: isGetAllHotelsLoading,
+	getAllHotels,
+} = useGetAllHotels()
 
 const defaultParams = {
 	search: null,
@@ -171,44 +184,21 @@ onMounted(async () => {
 	if (hasCustomParams.value) {
 		await customSearchHotels()
 	} else {
-		await getAllHotels()
+		await getAllHotelsHandler()
 	}
 })
 
-const getAllHotels = async () => {
-	isHotelsLoading.value = true
-	try {
-		const response = await $fetch("/api/hotels", {
-			method: "POST",
-		})
-
-		if (response.data) {
-			hotels.value = response
-		}
-	} catch (error) {
-		console.error("Hotel search error:", error)
-	} finally {
-		isHotelsLoading.value = false
+const getAllHotelsHandler = async () => {
+	await getAllHotels()
+	if (allHotelsData.value && allHotelsData.value.data) {
+		hotels.value = allHotelsData.value
 	}
 }
 
 const customSearchHotels = async () => {
-	isHotelsLoading.value = true
-	try {
-		const response = await $fetch("/api/hotels/custom-search", {
-			method: "POST",
-			body: {
-				search: getParam("search"),
-			},
-		})
-
-		if (response.data) {
-			hotels.value = response
-		}
-	} catch (error) {
-		console.error("Hotel search error:", error)
-	} finally {
-		isHotelsLoading.value = false
+	await searchHotels(getParam("search"))
+	if (customSearchData.value && customSearchData.value.data) {
+		hotels.value = customSearchData.value
 	}
 }
 

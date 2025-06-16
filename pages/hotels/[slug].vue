@@ -13,7 +13,7 @@
 				path: '/',
 				query: route.query,
 			}"
-			class="mt-12 mb-5 flex items-center gap-2 text-base text-gray-700"
+			class="mt-16 mb-5 flex items-center gap-2 text-base text-gray-700"
 		>
 			<ChevronLeftIcon class="size-5" /> Back to Hotels
 		</NuxtLink>
@@ -100,6 +100,7 @@
 import { ChevronLeftIcon, MapIcon, CopyIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { Button } from "@/components/ui/button"
+import { useGetHotelDetail } from "~/composables/useGetHotelDetail"
 
 const route = useRoute()
 const router = useRouter()
@@ -107,15 +108,15 @@ const { getParam } = useUrlParams()
 const isPhotoGalleryOpen = ref(false)
 const activeTab = ref("rooms")
 
-const { data: hotel, pending: isHotelDetailLoading } = useFetch(
-	`/api/hotels/${route.params.slug}`,
-	{
-		method: "POST",
-		lazy: false,
-		immediate: true,
-		$fetch: useNuxtApp().$api,
-	},
-)
+const {
+	data: hotel,
+	loading: isHotelDetailLoading,
+	getHotelDetail,
+} = useGetHotelDetail()
+
+onMounted(() => {
+	getHotelDetail(route.params.slug)
+})
 
 const hotelDetailData = computed(() => hotel.value?.data || {})
 

@@ -1,5 +1,11 @@
+import { type ClassValue, clsx } from "clsx"
 import dayjs from "dayjs"
+import { twMerge } from "tailwind-merge"
 import { computed } from "vue"
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs))
+}
 
 export const formatTime = (time: string | undefined) => {
 	if (!time) return "02:00 PM"

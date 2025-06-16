@@ -27,16 +27,9 @@
 			</div>
 			<div
 				ref="bannerFormRef"
-				class="absolute -bottom-20 left-1/2 z-10 w-5/6 -translate-x-1/2 transform"
+				class="absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 transform"
 			>
-				<div
-					class="flex w-full flex-col items-center rounded-2xl bg-white p-6 shadow-lg"
-				>
-					<div class="w-full space-y-6">
-						<FilterRoomSearch @search-hotels="customSearchHotels" />
-						<FilterHotelsSearch />
-					</div>
-				</div>
+				<FilterHotelSearchBar @search-hotels="customSearchHotels" />
 			</div>
 		</div>
 

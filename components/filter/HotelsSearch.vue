@@ -1,13 +1,20 @@
 <template>
-	<div class="w-full" @blur="onSearchBlur">
-		<input
-			:value="getParam('search')"
-			type="text"
-			placeholder="Search hotels..."
-			class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none"
-			@input="onInputChange"
-			@keydown.enter.prevent="onSearchSubmit"
-		/>
+	<div class="w-full py-2" @blur="onSearchBlur">
+		<div class="relative w-full max-w-sm items-center">
+			<Input
+				:value="getParam('search')"
+				type="text"
+				placeholder="Search destinations"
+				@input="onInputChange"
+				@keydown.enter.prevent="onSearchSubmit"
+				class="pl-8"
+			/>
+			<span
+				class="absolute inset-y-0 start-0 flex items-center justify-center px-2"
+			>
+				<SearchIcon class="text-muted-foreground size-5" />
+			</span>
+		</div>
 
 		<div
 			v-if="isLoading && isResultsVisible"
@@ -43,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { SearchIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { useDebounceFn } from "@vueuse/core"
 import type { THotelSearch } from "~/types"

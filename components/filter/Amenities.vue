@@ -5,7 +5,7 @@
 			<div v-for="amenity in amenities" :key="amenity.id">
 				<div class="flex items-center justify-between gap-x-1">
 					<div class="flex items-center gap-x-2">
-						<ui-checkbox
+						<Checkbox
 							:id="'amenity-' + amenity.id"
 							:model-value="modelValue.includes(amenity.id)"
 							:value="amenity.id"
@@ -27,6 +27,8 @@
 </template>
 
 <script setup>
+import { Checkbox } from "@/components/ui/checkbox"
+
 const props = defineProps({
 	modelValue: {
 		type: Array,

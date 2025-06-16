@@ -47,7 +47,7 @@
 			>
 				{{ hotelData.description }}
 			</p>
-			<CommonButton
+			<Button
 				variant="ghost"
 				v-if="hotelData.description.length > 200"
 				@click="isDescriptionExpanded = !isDescriptionExpanded"
@@ -58,7 +58,7 @@
 					:class="{ 'rotate-180': isDescriptionExpanded }"
 					class="size-4"
 				/>
-			</CommonButton>
+			</Button>
 		</div>
 
 		<div>
@@ -93,14 +93,13 @@
 					<span class="text-gray-700">{{ amenity.name }}</span>
 				</div>
 			</div>
-			<CommonButton
+			<Button
 				variant="ghost"
 				v-if="hotelData.amenities?.length > 6"
 				@click="toggleAmenities"
-				class="text-primary mt-2 !px-0 font-medium hover:text-blue-400"
 			>
 				{{ showAllAmenities ? "Show Less" : `View All Amenities` }}
-			</CommonButton>
+			</Button>
 		</div>
 	</div>
 </template>
@@ -112,6 +111,7 @@ import {
 	MapPinIcon,
 	ChevronDownIcon,
 } from "lucide-vue-next"
+import { Button } from "@/components/ui/button"
 
 defineProps({
 	hotelData: {

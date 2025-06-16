@@ -18,9 +18,9 @@
 						<h2 class="text-2xl font-semibold">{{ hotelName }}</h2>
 						<p class="text-gray-500">{{ images?.length || 0 }} Photos</p>
 					</div>
-					<CommonButton variant="ghost" @click="$emit('close')" class="!p-0">
+					<Button variant="ghost" @click="$emit('close')" class="!p-0">
 						<XIcon class="size-5 text-gray-700" />
-					</CommonButton>
+					</Button>
 				</div>
 
 				<!-- Gallery Content -->
@@ -79,6 +79,7 @@
 
 <script setup>
 import { XIcon, HotelIcon } from "lucide-vue-next"
+import { Button } from "@/components/ui/button"
 
 const props = defineProps({
 	isOpen: {
@@ -97,7 +98,6 @@ const props = defineProps({
 </script>
 
 <style scoped>
-/* Custom animations that complement Tailwind */
 @keyframes slide-up {
 	from {
 		opacity: 0;

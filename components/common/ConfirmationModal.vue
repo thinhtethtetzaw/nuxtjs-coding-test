@@ -37,16 +37,12 @@
 
 				<!-- Footer -->
 				<div class="flex gap-3">
-					<CommonButton
-						@click="$emit('close')"
-						variant="outline"
-						class="flex-1"
-					>
+					<Button @click="$emit('close')" variant="outline" class="flex-1">
 						{{ cancelButtonText }}
-					</CommonButton>
-					<CommonButton @click="handleConfirm" class="flex-1">
+					</Button>
+					<Button @click="handleConfirm" class="flex-1">
 						{{ confirmButtonText }}
-					</CommonButton>
+					</Button>
 				</div>
 			</div>
 		</div>
@@ -55,6 +51,7 @@
 
 <script setup>
 import { XIcon } from "lucide-vue-next"
+import { Button } from "@/components/ui/button"
 
 const props = defineProps({
 	isOpen: { type: Boolean, required: true },

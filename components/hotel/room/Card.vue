@@ -30,14 +30,14 @@
 							<span>{{ amenity.amenity_name }}</span>
 						</div>
 					</div>
-					<CommonButton
+					<Button
 						v-if="room.amenities?.length > 2"
 						@click="toggleRoomGallery"
 						variant="ghost"
 						class="p-0 underline"
 					>
 						View all amenities
-					</CommonButton>
+					</Button>
 				</div>
 			</div>
 		</div>
@@ -85,14 +85,14 @@
 							<CheckIcon class="text-primary size-3" />
 							<span>Free Cancellation</span>
 						</div>
-						<CommonButton
+						<Button
 							v-if="ratePlan.benefits?.length > 2"
 							@click="toggleRoomGallery"
 							variant="ghost"
 							class="p-0 text-xs underline"
 						>
 							More details
-						</CommonButton>
+						</Button>
 					</div>
 				</div>
 				<p
@@ -101,9 +101,9 @@
 				>
 					{{ ratePlan.cancel_penalty_description.substring(0, 50) }}...
 				</p>
-				<CommonButton type="button" class="w-full" @click="handleBookNow">
+				<Button type="button" class="w-full" @click="handleBookNow">
 					Book Now
-				</CommonButton>
+				</Button>
 			</div>
 		</div>
 		<HotelRoomGalleryModal
@@ -139,6 +139,7 @@
 <script setup>
 import { UsersIcon, RulerIcon, CheckIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
+import { Button } from "@/components/ui/button"
 
 // Props
 const props = defineProps({

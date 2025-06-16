@@ -118,21 +118,21 @@
 							</div>
 						</div>
 					</div>
-					<CommonButton
+					<Button
 						type="button"
 						@click="onGuestSelectorDone"
 						class="w-full !bg-gray-800"
 					>
 						Done
-					</CommonButton>
+					</Button>
 				</div>
 			</div>
 
 			<!-- Search Button -->
-			<CommonButton type="button" class="px-6" @click="emit('search-hotels')">
+			<Button type="button" class="px-6" @click="emit('search-hotels')">
 				<SearchIcon class="size-4 text-white" />
 				<span class="ml-2">Search</span>
-			</CommonButton>
+			</Button>
 		</div>
 
 		<!-- Searchbar Layout for Banner -->
@@ -277,13 +277,13 @@
 									</div>
 								</div>
 
-								<CommonButton
+								<Button
 									type="button"
 									@click="onGuestSelectorDone"
 									class="w-full !bg-gray-800"
 								>
 									Done
-								</CommonButton>
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -291,14 +291,10 @@
 						<label class="mb-2 block text-sm font-medium text-gray-700"
 							>&nbsp;</label
 						>
-						<CommonButton
-							type="button"
-							class="w-full"
-							@click="emit('search-hotels')"
-						>
+						<Button type="button" class="w-full" @click="emit('search-hotels')">
 							<SearchIcon class="size-4 text-white" />
 							<span class="ml-2">Search</span>
-						</CommonButton>
+						</Button>
 					</div>
 				</div>
 			</div>
@@ -307,9 +303,10 @@
 </template>
 
 <script setup>
+import dayjs from "dayjs"
+import { Button } from "@/components/ui/button"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { ChevronDownIcon, SearchIcon } from "lucide-vue-next"
-import dayjs from "dayjs"
 import { createUrlParamComputed, createDateParamComputed } from "~/utils"
 
 const props = defineProps({

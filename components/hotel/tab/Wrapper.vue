@@ -1,7 +1,7 @@
 <template>
 	<div class="rounded-2xl border border-gray-200 bg-white">
 		<div class="relative flex border-b-2 border-gray-200">
-			<CommonButton
+			<Button
 				v-for="tab in tabs"
 				:key="tab.key"
 				variant="ghost"
@@ -14,7 +14,7 @@
 				]"
 			>
 				{{ tab.label }}
-			</CommonButton>
+			</Button>
 		</div>
 		<div class="p-6">
 			<slot :active-tab="activeTab" />
@@ -23,6 +23,7 @@
 </template>
 
 <script setup>
+import { Button } from "@/components/ui/button"
 defineProps({
 	tabs: {
 		type: Array,

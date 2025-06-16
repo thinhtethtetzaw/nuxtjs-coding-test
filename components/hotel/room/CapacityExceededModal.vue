@@ -52,16 +52,12 @@
 
 				<!-- Footer -->
 				<div class="flex gap-3">
-					<CommonButton
-						@click="$emit('close')"
-						variant="outline"
-						class="flex-1"
-					>
+					<Button @click="$emit('close')" variant="outline" class="flex-1">
 						Cancel
-					</CommonButton>
-					<CommonButton @click="handleSearchNewRooms" class="flex-1">
+					</Button>
+					<Button @click="handleSearchNewRooms" class="flex-1">
 						Find Better Rooms
-					</CommonButton>
+					</Button>
 				</div>
 			</div>
 		</div>
@@ -70,6 +66,7 @@
 
 <script setup>
 import { AlertTriangleIcon, XIcon } from "lucide-vue-next"
+import { Button } from "@/components/ui/button"
 
 const props = defineProps({
 	isOpen: { type: Boolean, required: true },

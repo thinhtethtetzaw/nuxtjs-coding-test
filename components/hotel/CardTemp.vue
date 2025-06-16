@@ -25,7 +25,7 @@
 
 				<div class="flex flex-wrap items-center gap-1">
 					<template v-for="amenity in hotel.amenities" :key="amenity.id">
-						<!-- <ui-badge variant="secondary">{{ amenity.name }}</ui-badge> -->
+						<ui-badge variant="secondary">{{ amenity.name }}</ui-badge>
 					</template>
 				</div>
 
@@ -57,7 +57,7 @@
 						},
 					}"
 				>
-					<CommonButton>See availability</CommonButton>
+					<Button>See availability</Button>
 				</NuxtLink>
 			</div>
 		</div>
@@ -66,6 +66,7 @@
 
 <script setup lang="ts">
 import { CalendarXIcon } from "lucide-vue-next"
+import { Button } from "@/components/ui/button"
 
 const route = useRoute()
 

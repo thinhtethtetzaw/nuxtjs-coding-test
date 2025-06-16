@@ -28,10 +28,7 @@
 			<div class="mt-10 grid grid-cols-12 gap-6">
 				<!-- Left Column -->
 				<div class="col-span-8 space-y-6">
-					<HotelDetailOverview
-						v-if="activeTab === 'overview'"
-						:hotelData="hotelDetailData"
-					/>
+					<HotelDetailOverview :hotelData="hotelDetailData" />
 
 					<HotelTabWrapper
 						:tabs="tabs"
@@ -76,23 +73,14 @@
 							</p>
 						</div>
 						<div class="flex w-full gap-2">
-							<CommonButton
-								variant="outline"
-								@click="copyAddress"
-								class="flex w-full items-center gap-2"
-							>
+							<Button variant="outline" @click="copyAddress" class="flex-1">
 								<CopyIcon class="h-4 w-4 text-gray-700" />
 								Copy Address
-							</CommonButton>
-							<CommonButton
-								@click="getDirections"
-								variant="primary"
-								size="md"
-								class="flex w-full items-center gap-2"
-							>
+							</Button>
+							<Button @click="getDirections" class="flex-1">
 								<MapIcon class="h-4 w-4 text-white" />
 								Get Directions
-							</CommonButton>
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -111,6 +99,7 @@
 <script setup>
 import { ChevronLeftIcon, MapIcon, CopyIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
+import { Button } from "@/components/ui/button"
 
 const route = useRoute()
 const router = useRouter()

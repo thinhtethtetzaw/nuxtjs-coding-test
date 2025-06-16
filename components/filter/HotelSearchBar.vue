@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="mx-auto grid w-full max-w-5xl min-w-4xl grid-cols-12 items-center rounded-2xl border border-gray-200 bg-white px-2 py-2 shadow-lg"
+		class="mx-auto grid w-full max-w-5xl min-w-4xl grid-cols-12 items-center rounded-2xl border border-gray-200 bg-white px-4 py-2 shadow-lg"
 	>
-		<div class="col-span-4 cursor-pointer px-3 py-2 transition-colors">
+		<div class="col-span-4 cursor-pointer py-2">
 			<Popover v-model:open="showSearchResults">
 				<PopoverTrigger as-child>
 					<div class="flex items-center gap-1">
@@ -60,9 +60,7 @@
 		<!-- Check In Field -->
 		<Popover v-model:open="showCheckInCalendar">
 			<PopoverTrigger as-child>
-				<div
-					class="col-span-2 cursor-pointer border-l border-gray-200 py-2 transition-colors"
-				>
+				<div class="col-span-2 cursor-pointer border-l border-gray-200 py-2">
 					<div class="flex flex-col items-center">
 						<div>
 							<div class="text-sm font-semibold text-gray-900">Check in</div>
@@ -87,9 +85,7 @@
 		<!-- Check Out Field -->
 		<Popover v-model:open="showCheckOutCalendar">
 			<PopoverTrigger as-child>
-				<div
-					class="col-span-2 cursor-pointer border-l border-gray-200 py-2 transition-colors"
-				>
+				<div class="col-span-2 cursor-pointer border-l border-gray-200 py-2">
 					<div class="flex flex-col items-center">
 						<div>
 							<div class="text-sm font-semibold text-gray-900">Check out</div>
@@ -211,11 +207,10 @@
 			</PopoverContent>
 		</Popover>
 
-		<!-- Search Button -->
-		<div class="col-span-1">
+		<div class="col-span-1 flex items-center justify-end">
 			<Button
 				@click="emit('search-hotels')"
-				class="h-16 w-full cursor-pointer rounded-xl px-8 py-6 text-white"
+				class="size-16 cursor-pointer rounded-xl text-white"
 			>
 				<SearchIcon class="size-6" />
 			</Button>

@@ -122,13 +122,15 @@
 			@search-new-rooms="handleSearchNewRooms"
 		/>
 
-		<CommonConfirmationModal
+		<CommonBaseDialog
 			:is-open="isBookingConfirmModalOpen"
+			@update:isOpen="toggleBookingConfirmModal"
+			@confirm="handleBookingConfirmed"
 			title="Booking Confirmation"
 			description="Are you sure you want to book this room?"
-			@close="toggleBookingConfirmModal"
-			@confirm="handleBookingConfirmed"
+			confirm-text="Confirm Booking"
 		/>
+
 		<CommonToast
 			:is-visible="isToastVisible"
 			message="Room booked successfully!"
@@ -141,7 +143,6 @@ import { UsersIcon, RulerIcon, CheckIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { Button } from "@/components/ui/button"
 
-// Props
 const props = defineProps({
 	room: { type: Object, required: true },
 })

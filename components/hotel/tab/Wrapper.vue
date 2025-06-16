@@ -1,5 +1,5 @@
 <template>
-	<div class="rounded-2xl border border-gray-200 bg-white">
+	<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
 		<div class="relative flex border-b-2 border-gray-200">
 			<Button
 				v-for="tab in tabs"

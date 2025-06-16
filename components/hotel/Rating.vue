@@ -1,5 +1,5 @@
 <template>
-	<div class="flex items-center gap-x-1">
+	<div v-if="!showText" class="flex items-center gap-x-1">
 		<template v-for="i in 5" :key="i">
 			<StarIcon
 				v-if="i <= Math.floor(Number(rating))"
@@ -12,6 +12,10 @@
 			<StarIcon v-else class="h-5 w-5 text-gray-300" />
 		</template>
 	</div>
+	<div v-else class="flex items-center gap-x-1">
+		<StarIcon class="size-4 fill-yellow-400 text-yellow-400" />
+		<p>{{ rating }}</p>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -21,6 +25,10 @@ defineProps({
 	rating: {
 		type: Number,
 		required: true,
+	},
+	showText: {
+		type: Boolean,
+		default: false,
 	},
 })
 </script>

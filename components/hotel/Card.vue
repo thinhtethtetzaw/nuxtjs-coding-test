@@ -1,73 +1,49 @@
 <template>
-	<div
-		class="mb-2 flex flex-col overflow-hidden rounded-2xl border border-gray-200 transition-all duration-200"
+	<NuxtLink
+		:to="{
+			path: `/hotels/${hotel.slug}`,
+			query: {
+				...route.query,
+				search: hotel.hotel_name,
+			},
+		}"
+		class="flex flex-col gap-y-4 overflow-hidden"
 	>
-		<NuxtImg
-			:src="hotel.gallery_all?.[0]?.url || '/placeholder-hotel.jpg'"
-			:alt="hotel.hotel_name"
-			class="h-52 w-full object-cover"
-		/>
-
-		<div class="flex flex-col gap-2 p-4">
-			<p class="text-primary">
-				{{ hotel.address?.[0]?.cityName || hotel.address?.[0]?.countryName }}
-			</p>
-			<h2 class="mb-2 text-xl font-semibold text-gray-700">
-				{{ hotel.hotel_name }}
-			</h2>
-			<div class="mt-4 flex items-center justify-between gap-2 text-gray-700">
-				<span class="text-gray-700"> Avg. Price: ${{ hotel.avg_price }} </span>
-				<span class="mx-2 text-gray-300">|</span>
-				<div class="flex items-center gap-1">
-					<div class="flex items-center gap-1">
-						<div v-for="n in 5" :key="'star-' + n">
-							<StarIcon
-								v-if="n <= Math.floor(Number(hotel.rating))"
-								class="size-4 fill-yellow-400 text-yellow-400"
-							/>
-							<StarHalfIcon
-								v-else-if="
-									n === Math.ceil(Number(hotel.rating)) &&
-									Number(hotel.rating) % 1 >= 0.5
-								"
-								class="h-5 w-5 fill-yellow-400 text-yellow-400"
-							/>
-							<StarIcon v-else class="h-5 w-5 text-gray-300" />
-						</div>
-					</div>
-					<span class="ml-1 text-gray-700">{{ hotel.rating }}</span>
-				</div>
-			</div>
-			<button
-				@click="viewDetails"
-				class="bg-primary mt-2 cursor-pointer rounded-full px-4 py-2 text-white transition-all duration-200 hover:scale-105"
-			>
-				View Details
-			</button>
+		<div>
+			<NuxtImg
+				:src="hotel.gallery_all?.[0]?.url || '/placeholder-hotel.jpg'"
+				:alt="hotel.hotel_name"
+				class="aspect-square h-full w-full rounded-xl object-cover"
+			/>
 		</div>
-	</div>
+		<div class="flex flex-col gap-y-1">
+			<div class="flex flex-col gap-y-0.5">
+				<div class="flex items-center justify-between gap-x-1">
+					<h4 class="truncate text-base font-semibold">
+						{{ hotel.hotel_name }}
+					</h4>
+					<HotelRating :rating="Number(hotel.rating)" show-text />
+				</div>
+				<p class="text-muted-foreground">
+					{{ hotel.city_name || hotel.country_name }}
+				</p>
+			</div>
+
+			<div class="flex items-center gap-x-2">
+				<p class="font-semibold">{{ hotel.currency }} {{ hotel.avg_price }}</p>
+				<p class="text-muted-foreground">for 1 night</p>
+			</div>
+		</div>
+	</NuxtLink>
 </template>
 
-<script setup>
-import { StarIcon, StarHalfIcon } from "lucide-vue-next"
+<script setup lang="ts">
+const route = useRoute()
 
-const props = defineProps({
+defineProps({
 	hotel: {
 		type: Object,
 		required: true,
 	},
 })
-
-const route = useRoute()
-const router = useRouter()
-
-const viewDetails = () => {
-	router.push({
-		path: `/hotels/${props.hotel.slug}`,
-		query: {
-			...route.query,
-			search: props.hotel.hotel_name,
-		},
-	})
-}
 </script>

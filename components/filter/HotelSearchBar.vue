@@ -1,17 +1,24 @@
 <template>
 	<div
-		class="mx-auto grid w-full max-w-5xl min-w-4xl grid-cols-12 items-center rounded-2xl border border-gray-200 bg-white px-4 py-2 shadow-lg"
+		class="lg:px-4"
+		:class="
+			fullWidth
+				? 'mx-auto grid w-full grid-cols-12 items-center bg-white px-12 lg:max-w-5xl lg:min-w-4xl xl:py-2'
+				: 'grid w-full min-w-[600px] grid-cols-12 items-center rounded-xl border border-gray-200 bg-white px-2 shadow-lg lg:max-w-5xl lg:min-w-4xl lg:rounded-2xl xl:py-2'
+		"
 	>
 		<Popover v-model:open="showSearchResults">
 			<PopoverTrigger as-child>
-				<div class="col-span-4 flex cursor-pointer items-center gap-1 py-2">
+				<div
+					class="col-span-4 flex cursor-pointer items-center gap-2 py-2 lg:gap-4"
+				>
 					<div
-						class="mb-1 flex h-11 min-w-11 items-center justify-center rounded-xl bg-gray-200 p-2"
+						class="flex size-8 items-center justify-center rounded-md bg-gray-200 p-2 lg:mb-1 lg:size-11 lg:rounded-xl"
 					>
-						<MapPinIcon class="size-5" />
+						<MapPinIcon class="size-4 lg:size-5" />
 					</div>
-					<div class="flex flex-col gap-1">
-						<p class="px-3 text-sm font-semibold text-gray-900">Where</p>
+					<div class="flex flex-col lg:gap-1">
+						<p class="text-xs font-semibold text-gray-900 lg:text-sm">Where</p>
 						<div class="relative">
 							<Input
 								v-model="search"
@@ -19,7 +26,7 @@
 								placeholder="Search destinations"
 								@input="onInputChange"
 								@keydown.enter.prevent="onSearchSubmit"
-								class="h-auto border-none bg-transparent text-sm text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0"
+								class="h-auto border-none bg-transparent !text-xs text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0 md:px-0 lg:text-sm"
 							/>
 							<XIcon
 								v-if="search"
@@ -38,7 +45,7 @@
 					Number(searchResults.data.length ?? 0) > 0 &&
 					!isLoading
 				"
-				class="max-h-68 min-h-16 w-auto min-w-96 overflow-y-auto p-0"
+				class="max-h-68 min-h-16 w-auto min-w-64 overflow-y-auto p-0 lg:min-w-96"
 				align="start"
 			>
 				<div
@@ -48,12 +55,12 @@
 					@click="onSelect(result)"
 				>
 					<div>
-						<p class="font-medium text-gray-900">
+						<p class="text-sm font-medium text-gray-900 lg:text-sm">
 							{{ result.hotel_name }}
 						</p>
 						<p
 							v-if="result.city_name || result.country_name"
-							class="text-gray-500"
+							class="text-xs text-gray-500 lg:text-sm"
 						>
 							{{ result.city_name }} {{ result.country_name }}
 						</p>
@@ -65,14 +72,21 @@
 		<!-- Check In Field -->
 		<Popover v-model:open="showCheckInCalendar">
 			<PopoverTrigger as-child>
-				<div class="col-span-2 cursor-pointer border-l border-gray-200 py-2">
+				<div class="col-span-2 cursor-pointer border-l border-gray-200">
 					<div class="flex flex-col items-center">
 						<div>
-							<div class="text-sm font-semibold text-gray-900">Check in</div>
-							<div class="mt-2 text-sm text-gray-500" v-if="checkInDate">
+							<div class="text-xs font-semibold text-gray-900 lg:text-sm">
+								Check in
+							</div>
+							<div
+								class="mt-1 text-xs text-gray-500 lg:mt-2 lg:text-sm"
+								v-if="checkInDate"
+							>
 								{{ dayjs(checkInDate).format("YYYY-MM-DD") }}
 							</div>
-							<div v-else class="mt-2 text-sm text-gray-400">Add dates</div>
+							<div v-else class="mt-1 text-xs text-gray-400 lg:mt-2 lg:text-sm">
+								Add dates
+							</div>
 						</div>
 					</div>
 				</div>
@@ -90,14 +104,21 @@
 		<!-- Check Out Field -->
 		<Popover v-model:open="showCheckOutCalendar">
 			<PopoverTrigger as-child>
-				<div class="col-span-2 cursor-pointer border-l border-gray-200 py-2">
+				<div class="col-span-2 cursor-pointer border-l border-gray-200">
 					<div class="flex flex-col items-center">
 						<div>
-							<div class="text-sm font-semibold text-gray-900">Check out</div>
-							<div class="mt-1 text-sm text-gray-500" v-if="checkOutDate">
+							<div class="text-xs font-semibold text-gray-900 lg:text-sm">
+								Check out
+							</div>
+							<div
+								class="mt-1 text-xs text-gray-500 lg:mt-2 lg:text-sm"
+								v-if="checkOutDate"
+							>
 								{{ dayjs(checkOutDate).format("YYYY-MM-DD") }}
 							</div>
-							<div v-else class="mt-1 text-sm text-gray-400">Add dates</div>
+							<div v-else class="mt-1 text-xs text-gray-400 lg:mt-2 lg:text-sm">
+								Add dates
+							</div>
 						</div>
 					</div>
 				</div>
@@ -117,11 +138,11 @@
 				<div class="col-span-3 border-l border-gray-200">
 					<div class="flex flex-col items-center">
 						<div>
-							<div class="text-sm font-semibold text-gray-900">
+							<div class="text-xs font-semibold text-gray-900 lg:text-sm">
 								Room & Guests
 							</div>
 							<div
-								class="mt-1 text-sm text-gray-500"
+								class="mt-1 text-xs text-gray-500 lg:text-sm"
 								v-if="adults + children + rooms > 0"
 							>
 								{{ adults + children }} Guest{{
@@ -133,7 +154,9 @@
 									Room{{ rooms > 1 ? "s" : "" }}</span
 								>
 							</div>
-							<div v-else class="mt-1 text-sm text-gray-400">Add here</div>
+							<div v-else class="mt-1 text-xs text-gray-400 lg:text-sm">
+								Add here
+							</div>
 						</div>
 					</div>
 				</div>
@@ -215,9 +238,9 @@
 		<div class="col-span-1 flex items-center justify-end">
 			<Button
 				@click="emit('search-hotels')"
-				class="size-16 cursor-pointer rounded-xl text-white"
+				class="size-8 cursor-pointer rounded-md text-white lg:size-12 lg:rounded-xl xl:size-16"
 			>
-				<SearchIcon class="size-6" />
+				<SearchIcon class="size-5 lg:size-6" />
 			</Button>
 		</div>
 	</div>
@@ -225,7 +248,7 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs"
-import { SearchIcon, MapPinIcon, XIcon } from "lucide-vue-next"
+import { SearchIcon, MapPinIcon, XIcon, ChevronDownIcon } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
@@ -242,6 +265,14 @@ import { useHotelSearch } from "~/composables/useHotelSearch"
 
 const route = useRoute()
 const router = useRouter()
+
+defineProps({
+	fullWidth: {
+		type: Boolean,
+		default: false,
+	},
+})
+
 const emit = defineEmits(["search-hotels", "clear-search"])
 
 const { getParam, setParam } = useUrlParams({

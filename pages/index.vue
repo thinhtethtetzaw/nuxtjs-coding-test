@@ -1,14 +1,21 @@
 <template>
-	<section>
-		<CommonStickySearchBar
-			:show="showStickyForm"
-			@search-hotels="customSearchHotels"
-		/>
+	<section class="py-8">
+		<!-- Sticky Search Bar -->
+		<div
+			v-if="showStickyForm"
+			class="fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all"
+		>
+			<FilterHotelSearchBar
+				:fullWidth="true"
+				@search-hotels="customSearchHotels"
+				@clear-search="getAllHotels"
+			/>
+		</div>
 
 		<!-- Banner -->
-		<div class="relative">
+		<div class="relative container mx-auto max-w-7xl px-12 lg:px-8 xl:px-0">
 			<div
-				class="relative mb-[-60px] h-[60vh] overflow-hidden rounded-3xl p-28 before:absolute before:inset-0 before:bg-black/40 before:content-['']"
+				class="relative mb-[-60px] overflow-hidden rounded-3xl p-28 before:absolute before:inset-0 before:bg-black/40 before:content-[''] xl:h-[60vh] 2xl:h-[40vh]"
 			>
 				<img
 					:src="bannerImage"
@@ -30,6 +37,7 @@
 				class="absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 transform"
 			>
 				<FilterHotelSearchBar
+					:fullWidth="false"
 					@search-hotels="customSearchHotels"
 					@clear-search="getAllHotels"
 				/>
@@ -37,31 +45,27 @@
 		</div>
 
 		<!-- Hotel List -->
-		<div class="mx-auto mt-36 grid grid-cols-12 gap-6">
-			<div class="col-span-3">
-				<div class="sticky top-24">
-					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
-					<div v-if="isGetAllHotelsLoading || isCustomSearchLoading">
-						<CommonSkeletonLoading />
-					</div>
-					<div v-else class="flex flex-col gap-6">
-						<FilterPriceRange v-model="filters" />
-						<FilterAmenities
-							v-model="filters.selectedAmenities"
-							:amenities="availableAmenities"
-						/>
-					</div>
-				</div>
+		<div
+			class="container mx-auto mt-36 grid max-w-7xl grid-cols-12 gap-8 px-12 lg:px-8 xl:grid-cols-13 xl:gap-12 xl:px-0"
+		>
+			<div class="col-span-12 lg:col-span-4">
+				<Filter
+					:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"
+					:filters="filters"
+					@update:filters="filters = $event"
+					:available-amenities="availableAmenities"
+				/>
 			</div>
-			<div class="col-span-9 px-4">
+			<div class="col-span-12 lg:col-span-8 xl:col-span-9">
 				<div
 					v-if="isGetAllHotelsLoading || isCustomSearchLoading"
-					class="flex items-center justify-center py-10"
+					class="grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
 				>
-					<CommonSpinnerLoading :is-loading="true" />
+					<template v-for="n in 5">
+						<HotelCardSkeleton />
+					</template>
 				</div>
 				<div v-if="!isGetAllHotelsLoading && !isCustomSearchLoading">
-					<h2 class="mb-4 text-2xl font-bold">Discover Our Collection</h2>
 					<div
 						v-if="filteredHotels.data.length === 0"
 						class="flex flex-col items-center justify-center rounded-2xl bg-gray-50 p-12 text-center"
@@ -77,8 +81,11 @@
 							adjusting your filters or search for a different location.
 						</p>
 					</div>
-					<div v-else class="flex flex-col gap-y-8">
-						<HotelCardTemp
+					<div
+						v-else
+						class="grid w-full gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
+					>
+						<HotelCard
 							v-for="hotel in filteredHotels.data"
 							:key="hotel.id + hotel.slug"
 							:hotel="hotel"

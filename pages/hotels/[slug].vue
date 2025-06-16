@@ -1,6 +1,7 @@
 <template>
-	<!-- TODO: Add search func -->
-	<CommonStickySearchBar :show="true" @search-hotels="searchHotels" />
+	<div class="fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all">
+		<FilterHotelSearchBar :fullWidth="true" @search-hotels="searchHotels" />
+	</div>
 	<div
 		v-if="isHotelDetailLoading"
 		class="flex h-96 items-center justify-center pt-20"
@@ -101,6 +102,7 @@ import { ChevronLeftIcon, MapIcon, CopyIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { Button } from "@/components/ui/button"
 import { useGetHotelDetail } from "~/composables/useGetHotelDetail"
+import { useGetAllHotels } from "~/composables/useGetAllHotels"
 
 const route = useRoute()
 const router = useRouter()
@@ -113,6 +115,12 @@ const {
 	loading: isHotelDetailLoading,
 	getHotelDetail,
 } = useGetHotelDetail()
+
+const {
+	data: allHotelsData,
+	loading: isGetAllHotelsLoading,
+	getAllHotels,
+} = useGetAllHotels()
 
 onMounted(() => {
 	getHotelDetail(route.params.slug)

@@ -2,7 +2,7 @@
 	<div class="w-full py-2" @blur="onSearchBlur">
 		<div class="relative w-full max-w-sm items-center">
 			<Input
-				:value="getParam('search')"
+				v-model="search"
 				type="text"
 				placeholder="Search destinations"
 				@input="onInputChange"
@@ -62,6 +62,15 @@ const { getParam, setParam } = useUrlParams<{ search: string | null }>({
 	search: null,
 })
 const isResultsVisible = ref(false)
+const search = ref(getParam("search") || "")
+
+// Watch for URL parameter changes
+watch(
+	() => getParam("search"),
+	(newVal) => {
+		search.value = newVal || ""
+	},
+)
 
 const searchBody = computed(() => {
 	const search = getParam("search")
@@ -88,6 +97,7 @@ const debouncedExecute = useDebounceFn(() => {
 
 const onInputChange = (e: Event) => {
 	const target = e.target as HTMLInputElement
+	search.value = target.value
 	setParam("search", target.value)
 	debouncedExecute()
 }

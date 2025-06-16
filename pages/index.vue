@@ -34,7 +34,7 @@
 		</div>
 
 		<!-- Hotel List -->
-		<div class="mx-auto mt-48 grid grid-cols-12 gap-6">
+		<div class="mx-auto mt-36 grid grid-cols-12 gap-6">
 			<div class="col-span-3">
 				<div class="sticky top-24">
 					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>

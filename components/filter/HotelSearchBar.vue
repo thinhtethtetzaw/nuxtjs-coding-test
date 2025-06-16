@@ -2,60 +2,58 @@
 	<div
 		class="mx-auto grid w-full max-w-5xl min-w-4xl grid-cols-12 items-center rounded-2xl border border-gray-200 bg-white px-4 py-2 shadow-lg"
 	>
-		<div class="col-span-4 cursor-pointer py-2">
-			<Popover v-model:open="showSearchResults">
-				<PopoverTrigger as-child>
-					<div class="flex items-center gap-1">
-						<div
-							class="mb-1 flex h-11 min-w-11 items-center justify-center rounded-xl bg-gray-200 p-2"
-						>
-							<MapPinIcon class="size-5" />
-						</div>
-						<div class="flex flex-col">
-							<div class="px-3 text-sm font-semibold text-gray-900">Where</div>
-							<Input
-								v-model="search"
-								type="text"
-								placeholder="Search destinations"
-								@input="onInputChange"
-								@keydown.enter.prevent="onSearchSubmit"
-								class="h-auto border-none bg-transparent py-2 text-sm text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0"
-							/>
-						</div>
-					</div>
-				</PopoverTrigger>
-				<PopoverContent
-					v-if="
-						search ||
-						(searchResults &&
-							searchResults.data &&
-							Number(searchResults.data.length ?? 0) > 0 &&
-							!isLoading)
-					"
-					class="max-h-68 min-h-20 w-auto min-w-96 overflow-y-auto p-0"
-					align="start"
-				>
+		<Popover v-model:open="showSearchResults">
+			<PopoverTrigger as-child>
+				<div class="col-span-4 flex cursor-pointer items-center gap-1 py-2">
 					<div
-						v-for="result in searchResults?.data"
-						:key="result.id || result.slug"
-						class="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 last:border-b-0 hover:bg-blue-50"
-						@click="onSelect(result)"
+						class="mb-1 flex h-11 min-w-11 items-center justify-center rounded-xl bg-gray-200 p-2"
 					>
-						<div class="">
-							<div class="font-medium text-gray-900">
-								{{ result.hotel_name }}
-							</div>
-							<div
-								v-if="result.city_name || result.country_name"
-								class="text-gray-500"
-							>
-								{{ result.city_name }} {{ result.country_name }}
-							</div>
+						<MapPinIcon class="size-5" />
+					</div>
+					<div class="flex flex-col">
+						<div class="px-3 text-sm font-semibold text-gray-900">Where</div>
+						<Input
+							v-model="search"
+							type="text"
+							placeholder="Search destinations"
+							@input="onInputChange"
+							@keydown.enter.prevent="onSearchSubmit"
+							class="h-auto border-none bg-transparent py-2 text-sm text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0"
+						/>
+					</div>
+				</div>
+			</PopoverTrigger>
+			<PopoverContent
+				v-if="
+					search &&
+					searchResults &&
+					searchResults.data &&
+					Number(searchResults.data.length ?? 0) > 0 &&
+					!isLoading
+				"
+				class="max-h-68 min-h-16 w-auto min-w-96 overflow-y-auto p-0"
+				align="start"
+			>
+				<div
+					v-for="result in searchResults?.data"
+					:key="result.id || result.slug"
+					class="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 last:border-b-0 hover:bg-blue-50"
+					@click="onSelect(result)"
+				>
+					<div class="">
+						<div class="font-medium text-gray-900">
+							{{ result.hotel_name }}
+						</div>
+						<div
+							v-if="result.city_name || result.country_name"
+							class="text-gray-500"
+						>
+							{{ result.city_name }} {{ result.country_name }}
 						</div>
 					</div>
-				</PopoverContent>
-			</Popover>
-		</div>
+				</div>
+			</PopoverContent>
+		</Popover>
 
 		<!-- Check In Field -->
 		<Popover v-model:open="showCheckInCalendar">
@@ -408,7 +406,7 @@ const onGuestSelectorDone = () => {
 	setParam("rooms", rooms.value)
 	setParam("adults", adults.value)
 	setParam("children", children.value)
-	updateAgeOfChildren() // Ensure ages are saved when done
+	updateAgeOfChildren()
 	showGuestSelector.value = false
 }
 

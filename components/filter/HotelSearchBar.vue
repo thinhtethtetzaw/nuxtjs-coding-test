@@ -10,16 +10,23 @@
 					>
 						<MapPinIcon class="size-5" />
 					</div>
-					<div class="flex flex-col">
-						<div class="px-3 text-sm font-semibold text-gray-900">Where</div>
-						<Input
-							v-model="search"
-							type="text"
-							placeholder="Search destinations"
-							@input="onInputChange"
-							@keydown.enter.prevent="onSearchSubmit"
-							class="h-auto border-none bg-transparent py-2 text-sm text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0"
-						/>
+					<div class="flex flex-col gap-1">
+						<p class="px-3 text-sm font-semibold text-gray-900">Where</p>
+						<div class="relative">
+							<Input
+								v-model="search"
+								type="text"
+								placeholder="Search destinations"
+								@input="onInputChange"
+								@keydown.enter.prevent="onSearchSubmit"
+								class="h-auto border-none bg-transparent text-sm text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0"
+							/>
+							<XIcon
+								v-if="search"
+								class="absolute top-1/2 -right-3 size-4 -translate-y-1/2 cursor-pointer text-gray-500"
+								@click="onClearSearch"
+							/>
+						</div>
 					</div>
 				</div>
 			</PopoverTrigger>
@@ -40,16 +47,16 @@
 					class="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 last:border-b-0 hover:bg-blue-50"
 					@click="onSelect(result)"
 				>
-					<div class="">
-						<div class="font-medium text-gray-900">
+					<div>
+						<p class="font-medium text-gray-900">
 							{{ result.hotel_name }}
-						</div>
-						<div
+						</p>
+						<p
 							v-if="result.city_name || result.country_name"
 							class="text-gray-500"
 						>
 							{{ result.city_name }} {{ result.country_name }}
-						</div>
+						</p>
 					</div>
 				</div>
 			</PopoverContent>
@@ -62,10 +69,10 @@
 					<div class="flex flex-col items-center">
 						<div>
 							<div class="text-sm font-semibold text-gray-900">Check in</div>
-							<div class="py-2 text-sm text-gray-500" v-if="checkInDate">
+							<div class="mt-2 text-sm text-gray-500" v-if="checkInDate">
 								{{ dayjs(checkInDate).format("YYYY-MM-DD") }}
 							</div>
-							<div v-else class="py-2 text-sm text-gray-400">Add dates</div>
+							<div v-else class="mt-2 text-sm text-gray-400">Add dates</div>
 						</div>
 					</div>
 				</div>
@@ -87,10 +94,10 @@
 					<div class="flex flex-col items-center">
 						<div>
 							<div class="text-sm font-semibold text-gray-900">Check out</div>
-							<div class="py-2 text-sm text-gray-500" v-if="checkOutDate">
+							<div class="mt-1 text-sm text-gray-500" v-if="checkOutDate">
 								{{ dayjs(checkOutDate).format("YYYY-MM-DD") }}
 							</div>
-							<div v-else class="py-2 text-sm text-gray-400">Add dates</div>
+							<div v-else class="mt-1 text-sm text-gray-400">Add dates</div>
 						</div>
 					</div>
 				</div>
@@ -114,7 +121,7 @@
 								Room & Guests
 							</div>
 							<div
-								class="py-2 text-sm text-gray-500"
+								class="mt-1 text-sm text-gray-500"
 								v-if="adults + children + rooms > 0"
 							>
 								{{ adults + children }} Guest{{
@@ -126,7 +133,7 @@
 									Room{{ rooms > 1 ? "s" : "" }}</span
 								>
 							</div>
-							<div v-else class="py-2 text-sm text-gray-400">Add here</div>
+							<div v-else class="mt-1 text-sm text-gray-400">Add here</div>
 						</div>
 					</div>
 				</div>
@@ -217,7 +224,7 @@
 </template>
 
 <script setup lang="ts">
-import { SearchIcon, MapPinIcon } from "lucide-vue-next"
+import { SearchIcon, MapPinIcon, XIcon } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
@@ -235,7 +242,7 @@ import { parseDate } from "@internationalized/date"
 
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits(["search-hotels"])
+const emit = defineEmits(["search-hotels", "clear-search"])
 
 const { getParam, setParam } = useUrlParams({
 	search: null as string | null,
@@ -281,6 +288,12 @@ watch(
 		search.value = newVal || ""
 	},
 )
+
+const onClearSearch = () => {
+	search.value = ""
+	setParam("search", "")
+	emit("clear-search")
+}
 
 const onInputChange = (e: Event) => {
 	const target = e.target as HTMLInputElement

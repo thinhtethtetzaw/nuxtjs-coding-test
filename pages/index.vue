@@ -29,7 +29,10 @@
 				ref="bannerFormRef"
 				class="absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 transform"
 			>
-				<FilterHotelSearchBar @search-hotels="customSearchHotels" />
+				<FilterHotelSearchBar
+					@search-hotels="customSearchHotels"
+					@clear-search="getAllHotels"
+				/>
 			</div>
 		</div>
 

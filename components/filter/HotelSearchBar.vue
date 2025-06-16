@@ -1,10 +1,10 @@
 <template>
 	<div
-		class="lg:px-4"
+		class="hidden w-full grid-cols-12 items-center bg-white md:grid lg:max-w-5xl lg:min-w-4xl lg:px-4 xl:py-2"
 		:class="
 			fullWidth
-				? 'mx-auto grid w-full grid-cols-12 items-center bg-white px-12 lg:max-w-5xl lg:min-w-4xl xl:py-2'
-				: 'grid w-full min-w-[600px] grid-cols-12 items-center rounded-xl border border-gray-200 bg-white px-2 shadow-lg lg:max-w-5xl lg:min-w-4xl lg:rounded-2xl xl:py-2'
+				? 'mx-auto px-12'
+				: 'min-w-[600px] rounded-xl border border-gray-200 px-2 shadow-lg lg:rounded-2xl'
 		"
 	>
 		<Popover v-model:open="showSearchResults">
@@ -26,7 +26,7 @@
 								placeholder="Search destinations"
 								@input="onInputChange"
 								@keydown.enter.prevent="onSearchSubmit"
-								class="h-auto border-none bg-transparent !text-xs text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0 md:px-0 lg:text-sm"
+								class="!md:text-xs h-auto border-none bg-transparent text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0 md:px-0 lg:text-sm"
 							/>
 							<XIcon
 								v-if="search"
@@ -238,7 +238,7 @@
 		<div class="col-span-1 flex items-center justify-end">
 			<Button
 				@click="emit('search-hotels')"
-				class="size-8 cursor-pointer rounded-md text-white lg:size-12 lg:rounded-xl xl:size-16"
+				class="size-8 cursor-pointer rounded-md text-white lg:size-12 lg:rounded-xl xl:size-14"
 			>
 				<SearchIcon class="size-5 lg:size-6" />
 			</Button>

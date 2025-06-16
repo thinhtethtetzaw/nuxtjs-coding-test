@@ -1,9 +1,8 @@
 <template>
-	<section class="py-8">
-		<!-- Sticky Search Bar -->
+	<section class="py-4 md:py-8">
 		<div
 			v-if="showStickyForm"
-			class="fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all"
+			class="fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all md:hidden"
 		>
 			<FilterHotelSearchBar
 				:fullWidth="true"
@@ -12,10 +11,11 @@
 			/>
 		</div>
 
-		<!-- Banner -->
-		<div class="relative container mx-auto max-w-7xl px-12 lg:px-8 xl:px-0">
+		<div
+			class="relative container mx-auto hidden max-w-7xl px-12 md:block lg:px-8 xl:px-0"
+		>
 			<div
-				class="relative mb-[-60px] overflow-hidden rounded-3xl p-28 before:absolute before:inset-0 before:bg-black/40 before:content-[''] xl:h-[60vh] 2xl:h-[40vh]"
+				class="relative mb-[-60px] h-[40vh] overflow-hidden rounded-3xl p-10 before:absolute before:inset-0 before:bg-black/40 before:content-[''] lg:h-[60vh] lg:p-12 xl:p-28 2xl:h-[40vh]"
 			>
 				<img
 					:src="bannerImage"
@@ -23,10 +23,14 @@
 					class="absolute inset-0 -z-1 h-full w-full object-cover"
 				/>
 				<div class="relative z-10 space-y-4 text-left text-white">
-					<h1 class="text-6xl font-bold opacity-80 drop-shadow">
+					<h1
+						class="text-3xl font-bold opacity-80 drop-shadow lg:text-5xl xl:text-6xl"
+					>
 						Find Your Dream Stay
 					</h1>
-					<p class="mt-8 text-xl opacity-80 drop-shadow">
+					<p
+						class="mt-4 text-base opacity-80 drop-shadow lg:mt-5 lg:text-xl xl:mt-8"
+					>
 						From luxury retreats to cozy hideaways,<br />
 						we help you find the perfect place to create lasting memories
 					</p>
@@ -34,7 +38,7 @@
 			</div>
 			<div
 				ref="bannerFormRef"
-				class="absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 transform"
+				class="absolute -bottom-8 left-1/2 z-10 -translate-x-1/2 transform xl:-bottom-10"
 			>
 				<FilterHotelSearchBar
 					:fullWidth="false"
@@ -46,9 +50,10 @@
 
 		<!-- Hotel List -->
 		<div
-			class="container mx-auto mt-36 grid max-w-7xl grid-cols-12 gap-8 px-12 lg:px-8 xl:grid-cols-13 xl:gap-12 xl:px-0"
+			class="container mx-auto grid max-w-7xl grid-cols-12 gap-4 px-12 md:mt-28 lg:gap-8 lg:px-8 xl:mt-36 xl:grid-cols-13 xl:gap-12 xl:px-0"
 		>
-			<div class="col-span-12 lg:col-span-4">
+			<div class="col-span-12 flex items-center justify-between lg:col-span-4">
+				<div class="block bg-red-500 md:hidden">Hello</div>
 				<Filter
 					:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"
 					:filters="filters"

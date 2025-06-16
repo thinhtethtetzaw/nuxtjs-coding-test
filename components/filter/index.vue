@@ -21,12 +21,12 @@
 			<DrawerTrigger v-if="!isHotelsLoading">
 				<Button variant="outline">
 					<SlidersHorizontalIcon class="size-4" />
-					Filters
+					<span class="hidden md:block">Filters</span>
 				</Button>
 			</DrawerTrigger>
 			<Skeleton v-else class="h-8 w-20" />
 			<DrawerContent>
-				<div class="mx-auto max-w-md overflow-auto py-4">
+				<div class="scrollbar-hide mx-auto max-w-md overflow-auto py-4">
 					<div v-if="isHotelsLoading">
 						<CommonFilterSkeletonLoading />
 					</div>

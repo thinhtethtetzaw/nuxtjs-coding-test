@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { AlertTriangleIcon, XIcon } from "lucide-vue-next"
+import { XIcon } from "lucide-vue-next"
 
 const props = defineProps({
 	isOpen: { type: Boolean, required: true },

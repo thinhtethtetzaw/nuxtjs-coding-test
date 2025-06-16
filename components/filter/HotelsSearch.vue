@@ -45,6 +45,7 @@
 <script setup lang="ts">
 import { useUrlParams } from "~/composables/useUrlParams"
 import { useDebounceFn } from "@vueuse/core"
+import type { THotelSearch } from "~/types"
 
 const route = useRoute()
 const router = useRouter()
@@ -63,13 +64,14 @@ const {
 	data: searchResults,
 	execute,
 	pending: isLoading,
-} = useFetch("/api/hotels/search", {
+} = useFetch<THotelSearch>("/api/hotels/search", {
 	method: "POST",
 	body: searchBody,
 	lazy: true,
 	immediate: false,
-	$fetch: useNuxtApp().$api,
 })
+
+console.log("searchResultsData", searchResults.value?.data)
 
 const debouncedExecute = useDebounceFn(() => {
 	execute()
@@ -87,10 +89,10 @@ const onSearchSubmit = () => {
 	isResultsVisible.value = true
 }
 
-const onSelect = (result: string) => {
+const onSelect = (result: any) => {
 	router.push({
-		path: `/hotels/${result.slug}`,
-		query: { ...route.query, search: result.hotel_name },
+		path: `/hotels/${result?.slug}`,
+		query: { ...route.query, search: result?.hotel_name },
 	})
 }
 

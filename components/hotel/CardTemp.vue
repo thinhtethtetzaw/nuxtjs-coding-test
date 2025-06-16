@@ -8,7 +8,7 @@
 		<div class="col-span-9 flex flex-col justify-center px-4">
 			<div class="flex flex-col gap-y-6 border-b py-4 pt-6">
 				<div class="flex flex-col gap-y-1">
-					<HotelRating :rating="hotel.rating" />
+					<HotelRating :rating="Number(hotel.rating)" />
 
 					<h4 class="text-lg font-semibold">{{ hotel.hotel_name }}</h4>
 					<p class="text-muted-foreground">
@@ -53,6 +53,7 @@
 						path: `/hotels/${hotel.slug}`,
 						query: {
 							...route.query,
+							search: hotel.hotel_name,
 						},
 					}"
 				>
@@ -64,11 +65,11 @@
 </template>
 
 <script setup lang="ts">
-import { CalendarXIcon, StarHalfIcon, StarIcon } from "lucide-vue-next"
+import { CalendarXIcon } from "lucide-vue-next"
 
 const route = useRoute()
 
-const props = defineProps({
+defineProps({
 	hotel: {
 		type: Object,
 		required: true,

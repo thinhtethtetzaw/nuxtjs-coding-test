@@ -308,12 +308,7 @@
 
 <script setup>
 import { useUrlParams } from "~/composables/useUrlParams"
-import {
-	ChevronDownIcon,
-	MinusIcon,
-	PlusIcon,
-	SearchIcon,
-} from "lucide-vue-next"
+import { ChevronDownIcon, SearchIcon } from "lucide-vue-next"
 import dayjs from "dayjs"
 import { createUrlParamComputed, createDateParamComputed } from "~/utils"
 

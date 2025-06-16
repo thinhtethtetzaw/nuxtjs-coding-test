@@ -24,13 +24,7 @@
 </template>
 
 <script setup>
-import {
-	AlertTriangleIcon,
-	SearchIcon,
-	UsersIcon,
-	RulerIcon,
-	CheckIcon,
-} from "lucide-vue-next"
+import { AlertTriangleIcon } from "lucide-vue-next"
 
 const route = useRoute()
 const { getParam } = useUrlParams()

@@ -1,5 +1,6 @@
 <template>
-	<CommonStickySearchBar :show="true" />
+	<!-- TODO: Add search func -->
+	<CommonStickySearchBar :show="true" @search-hotels="searchHotels" />
 	<div
 		v-if="isHotelDetailLoading"
 		class="flex h-96 items-center justify-center pt-20"
@@ -108,44 +109,24 @@
 </template>
 
 <script setup>
-import {
-	ChevronLeftIcon,
-	MapIcon,
-	CopyIcon,
-	StarIcon,
-	CheckIcon,
-	PhoneIcon,
-	CreditCardIcon,
-	BanknoteIcon,
-	WalletIcon,
-} from "lucide-vue-next"
+import { ChevronLeftIcon, MapIcon, CopyIcon } from "lucide-vue-next"
+import { useUrlParams } from "~/composables/useUrlParams"
 
 const route = useRoute()
+const router = useRouter()
+const { getParam } = useUrlParams()
 const isPhotoGalleryOpen = ref(false)
-const showAllAmenities = ref(false)
 const activeTab = ref("rooms")
-const searchQuery = ref("")
-const selectedHotel = ref(null)
-const roomSearchParams = reactive({
-	check_in: "",
-	check_out: "",
-	rooms: 1,
-	adults: 2,
-	age_of_children: "",
-})
-const isRoomSearching = ref(false)
 
-const {
-	data: hotel,
-	pending: isHotelDetailLoading,
-	error,
-	refresh,
-} = useFetch(`/api/hotels/${route.params.slug}`, {
-	method: "POST",
-	lazy: false,
-	immediate: true,
-	$fetch: useNuxtApp().$api,
-})
+const { data: hotel, pending: isHotelDetailLoading } = useFetch(
+	`/api/hotels/${route.params.slug}`,
+	{
+		method: "POST",
+		lazy: false,
+		immediate: true,
+		$fetch: useNuxtApp().$api,
+	},
+)
 
 const hotelDetailData = computed(() => hotel.value?.data || {})
 
@@ -160,17 +141,12 @@ const getDirections = () => {
 
 const copyAddress = async () => {
 	const address = hotelDetailData.value.address?.[0]
-	if (address) {
-		const fullAddress = `${address.addressLine}, ${address.cityName}, ${address.stateProv}, ${address.postalCode}`
-	}
+	if (address)
+		`${address.addressLine}, ${address.cityName}, ${address.stateProv}, ${address.postalCode}`
 }
 
 const togglePhotoGallery = () => {
 	isPhotoGalleryOpen.value = !isPhotoGalleryOpen.value
-}
-
-const toggleAmenities = () => {
-	showAllAmenities.value = !showAllAmenities.value
 }
 
 const getPaymentMethodName = (cardCode) => {
@@ -202,26 +178,17 @@ const tabs = [
 	{ key: "contact", label: "Contact Information" },
 ]
 
-function initializeFromUrl() {
-	const query = route.query
-
-	if (query.search) searchQuery.value = String(query.search)
-	if (query.checkin) roomSearchParams.check_in = String(query.checkin)
-	if (query.checkout) roomSearchParams.check_out = String(query.checkout)
-	if (query.rooms) roomSearchParams.rooms = parseInt(query.rooms) || 1
-	if (query.adults) roomSearchParams.adults = parseInt(query.adults) || 2
-	if (query.ages) roomSearchParams.age_of_children = String(query.ages)
+const searchHotels = () => {
+	if (getParam("search") === hotelDetailData.value.hotel_name) {
+		router.push({
+			path: route.path,
+			query: route.query,
+		})
+	} else {
+		router.push({
+			path: "/",
+			query: { ...route.query, search: getParam("search") },
+		})
+	}
 }
-
-onMounted(() => {
-	initializeFromUrl()
-})
-
-watch(
-	() => route.query,
-	() => {
-		initializeFromUrl()
-	},
-	{ deep: true },
-)
 </script>

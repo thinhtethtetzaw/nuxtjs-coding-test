@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
 	try {
 		console.log("Fetching hotels from API...")
 		const response = await $fetch("https://api.onlynx.co.th/api/v1/ct-hotels", {

@@ -2,7 +2,7 @@
 	<section>
 		<CommonStickySearchBar
 			:show="showStickyForm"
-			@search-hotels="searchHotels"
+			@search-hotels="customSearchHotels"
 		/>
 
 		<!-- Banner -->
@@ -33,7 +33,7 @@
 					class="flex w-full flex-col items-center rounded-2xl bg-white p-6 shadow-lg"
 				>
 					<div class="w-full space-y-6">
-						<FilterRoomSearch @search-hotels="searchHotels" />
+						<FilterRoomSearch @search-hotels="customSearchHotels" />
 						<FilterHotelsSearch />
 					</div>
 				</div>
@@ -41,10 +41,7 @@
 		</div>
 
 		<!-- Hotel List -->
-		<div
-			class="mx-auto mt-48 grid grid-cols-12 gap-6"
-			:class="{ '': showStickyForm }"
-		>
+		<div class="mx-auto mt-48 grid grid-cols-12 gap-6">
 			<div class="col-span-3">
 				<div class="sticky top-24">
 					<h2 class="mb-6 text-2xl font-bold text-gray-900">Filter By:</h2>
@@ -61,16 +58,13 @@
 				</div>
 			</div>
 			<div class="col-span-9 px-4">
-				<div v-if="error" class="text-center">
-					{{ error.message || "Failed to load hotels" }}
-				</div>
 				<div
-					v-if="isHotelsLoading || isSearchingHotels"
+					v-if="isHotelsLoading"
 					class="flex items-center justify-center py-10"
 				>
 					<CommonSpinnerLoading :is-loading="true" />
 				</div>
-				<div v-if="!isHotelsLoading && !isSearchingHotels">
+				<div v-if="!isHotelsLoading">
 					<h2 class="mb-4 text-2xl font-bold">Discover Our Collection</h2>
 					<div
 						v-if="filteredHotels.data.length === 0"
@@ -90,7 +84,7 @@
 					<div v-else class="flex flex-col gap-y-8">
 						<HotelCardTemp
 							v-for="hotel in filteredHotels.data"
-							:key="hotel.id || hotel.slug"
+							:key="hotel.id + hotel.slug"
 							:hotel="hotel"
 						/>
 					</div>
@@ -101,31 +95,48 @@
 </template>
 
 <script setup>
-import {
-	HotelIcon,
-	UsersIcon,
-	RulerIcon,
-	AlertTriangleIcon,
-	XIcon,
-	SearchIcon,
-	ChevronDownIcon,
-	MinusIcon,
-	PlusIcon,
-	CheckIcon,
-} from "lucide-vue-next"
+import { HotelIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import bannerImage from "~/assets/images/hotel-banner.png"
 
-const { getParam, setParam } = useUrlParams()
+const { getParam } = useUrlParams()
 
 const showStickyForm = ref(false)
 const bannerFormRef = ref(null)
-const isSearchingHotels = ref(false)
+const hotels = ref([])
+const isHotelsLoading = ref(false)
 
 const filters = ref({
 	priceMin: null,
 	priceMax: null,
 	selectedAmenities: [],
+})
+
+const defaultParams = {
+	search: null,
+	check_in: new Date().toISOString().split("T")[0],
+	check_out: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+	adults: 1,
+	rooms: 1,
+}
+
+const hasCustomParams = computed(() => {
+	const currentParams = {
+		search: getParam("search"),
+		check_in: getParam("check_in") || defaultParams.check_in,
+		check_out: getParam("check_out") || defaultParams.check_out,
+		adults: Number(getParam("adults")) || defaultParams.adults,
+		rooms: Number(getParam("rooms")) || defaultParams.rooms,
+	}
+
+	if (!currentParams.search) {
+		return !Object.keys(defaultParams).every((key) => {
+			if (key === "search") return true
+			return currentParams[key]?.toString() === defaultParams[key]?.toString()
+		})
+	}
+
+	return true
 })
 
 const availableAmenities = computed(() => {
@@ -151,16 +162,59 @@ const availableAmenities = computed(() => {
 	)
 })
 
-const {
-	data: hotels,
-	pending: isHotelsLoading,
-	error,
-} = useFetch("/api/hotels", {
-	method: "POST",
-	lazy: false,
-	immediate: true,
-	$fetch: useNuxtApp().$api,
+const handleScroll = () => {
+	if (bannerFormRef.value) {
+		const rect = bannerFormRef.value.getBoundingClientRect()
+		showStickyForm.value = rect.bottom < 0
+	}
+}
+
+onMounted(async () => {
+	window.addEventListener("scroll", handleScroll)
+
+	if (hasCustomParams.value) {
+		await customSearchHotels()
+	} else {
+		await getAllHotels()
+	}
 })
+
+const getAllHotels = async () => {
+	isHotelsLoading.value = true
+	try {
+		const response = await $fetch("/api/hotels", {
+			method: "POST",
+		})
+
+		if (response.data) {
+			hotels.value = response
+		}
+	} catch (error) {
+		console.error("Hotel search error:", error)
+	} finally {
+		isHotelsLoading.value = false
+	}
+}
+
+const customSearchHotels = async () => {
+	isHotelsLoading.value = true
+	try {
+		const response = await $fetch("/api/hotels/custom-search", {
+			method: "POST",
+			body: {
+				search: getParam("search"),
+			},
+		})
+
+		if (response.data) {
+			hotels.value = response
+		}
+	} catch (error) {
+		console.error("Hotel search error:", error)
+	} finally {
+		isHotelsLoading.value = false
+	}
+}
 
 const filteredHotels = computed(() => {
 	if (!hotels.value?.data) return { data: [] }
@@ -186,44 +240,6 @@ const filteredHotels = computed(() => {
 			return true
 		}),
 	}
-})
-
-// Scroll handler for sticky form
-const handleScroll = () => {
-	if (bannerFormRef.value) {
-		const rect = bannerFormRef.value.getBoundingClientRect()
-		showStickyForm.value = rect.bottom < 0
-	}
-}
-
-const searchHotels = async () => {
-	isSearchingHotels.value = true
-	try {
-		const response = await $fetch("/api/hotels/custom-search", {
-			method: "POST",
-			body: {
-				search: getParam("search"),
-			},
-		})
-
-		if (response.data) {
-			hotels.value = response
-		}
-	} catch (error) {
-		console.error("Hotel search error:", error)
-	} finally {
-		isSearchingHotels.value = false
-		console.log(hotels.value)
-	}
-}
-
-const searchBody = computed(() => {
-	const search = getParam("search")
-	return search?.trim() ? { search: search.trim() } : undefined
-})
-
-onMounted(() => {
-	window.addEventListener("scroll", handleScroll)
 })
 
 onUnmounted(() => {

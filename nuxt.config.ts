@@ -4,6 +4,14 @@ import tailwindcss from "@tailwindcss/vite"
 
 export default defineNuxtConfig({
 	compatibilityDate: "2025-05-15",
+	app: {
+		head: {
+			title: "Hotel Booking App",
+			htmlAttrs: {
+				lang: "en",
+			},
+		},
+	},
 	devtools: { enabled: true },
 
 	components: {

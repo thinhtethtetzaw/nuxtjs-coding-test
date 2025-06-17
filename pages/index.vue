@@ -66,7 +66,7 @@
 				class="col-span-12 flex justify-between gap-2 md:block md:items-center lg:col-span-4"
 			>
 				<div
-					class="fixed top-0 left-0 z-50 flex w-full items-center gap-2 bg-white px-4 py-3 shadow-sm md:hidden"
+					class="px fixed top-0 left-0 z-50 flex w-full items-center gap-2 bg-white px-4 py-3 md:hidden"
 				>
 					<FilterHotelSearchBar
 						:fullWidth="false"
@@ -80,7 +80,9 @@
 						:available-amenities="availableAmenities"
 					/>
 				</div>
-				<div class="hidden md:block">
+				<div
+					class="sticky top-28 left-0 z-50 hidden w-full items-center gap-2 px-4 py-3 md:flex"
+				>
 					<Filter
 						:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"
 						:filters="filters"

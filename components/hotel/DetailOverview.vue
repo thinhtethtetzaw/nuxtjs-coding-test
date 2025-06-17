@@ -115,7 +115,7 @@
 	</div>
 </template>
 <script setup>
-import { formatTime } from "~/utils"
+import { formatTime } from "~/lib/utils"
 import {
 	StarIcon,
 	CheckIcon,

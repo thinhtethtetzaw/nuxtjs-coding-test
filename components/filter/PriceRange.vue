@@ -18,7 +18,7 @@
 				<div class="relative h-2 rounded-full bg-gray-200">
 					<!-- Active Range -->
 					<div
-						class="absolute h-2 rounded-full bg-blue-500"
+						class="bg-primary absolute h-2 rounded-full"
 						:style="activeRangeStyle"
 					></div>
 				</div>
@@ -172,7 +172,7 @@ watch(
 	height: 18px;
 	width: 18px;
 	border-radius: 50%;
-	background: #3b82f6;
+	background: #2e6171;
 	border: 2px solid white;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	cursor: pointer;
@@ -185,7 +185,7 @@ watch(
 	height: 18px;
 	width: 18px;
 	border-radius: 50%;
-	background: #3b82f6;
+	background: #2e6171;
 	border: 2px solid white;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	cursor: pointer;

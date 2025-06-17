@@ -522,7 +522,7 @@ import {
 } from "@/components/ui/popover"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { useDebounceFn } from "@vueuse/core"
-import { createUrlParamComputed, createDateParamComputed } from "~/utils"
+import { createUrlParamComputed, createDateParamComputed } from "~/lib/utils"
 import { parseDate } from "@internationalized/date"
 import { useHotelSearch } from "~/composables/useHotelSearch"
 import { watch } from "vue"

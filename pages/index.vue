@@ -16,7 +16,7 @@
 				<FilterHotelSearchBar
 					:fullWidth="true"
 					@search-hotels="customSearchHotels"
-					@clear-search="getAllHotels"
+					@clear-search="getAllHotelsHandler"
 				/>
 			</div>
 		</Transition>
@@ -53,7 +53,7 @@
 				<FilterHotelSearchBar
 					:fullWidth="false"
 					@search-hotels="customSearchHotels"
-					@clear-search="getAllHotels"
+					@clear-search="getAllHotelsHandler"
 				/>
 			</div>
 		</div>
@@ -71,7 +71,7 @@
 					<FilterHotelSearchBar
 						:fullWidth="false"
 						@search-hotels="customSearchHotels"
-						@clear-search="getAllHotels"
+						@clear-search="getAllHotelsHandler"
 					/>
 					<Filter
 						:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"

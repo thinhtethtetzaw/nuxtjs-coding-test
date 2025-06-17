@@ -51,7 +51,7 @@
 				variant="ghost"
 				v-if="hotelData.description.length > 200"
 				@click="isDescriptionExpanded = !isDescriptionExpanded"
-				class="mt-1 !p-0 !text-gray-800 underline"
+				class="mt-1 !bg-transparent !p-0 !text-gray-800 underline"
 			>
 				{{ isDescriptionExpanded ? "Show less" : "Read more" }}
 				<ChevronDownIcon
@@ -62,44 +62,55 @@
 		</div>
 
 		<div>
-			<div class="mt-4 flex items-center gap-8 border-t border-gray-200 pt-4">
-				<div class="flex flex-col items-start gap-y-2">
-					<span class="text-gray-600">Check-in</span>
-					<span class="font-medium text-gray-900">{{
+			<div class="flex items-center gap-8 border-t py-4">
+				<div class="flex flex-col items-start gap-y-1">
+					<div class="flex items-center gap-x-2">
+						<p class="text-muted-foreground">Check-in</p>
+						<div class="rounded-sm bg-green-100 p-1">
+							<ArrowRightIcon class="text-green-700" />
+						</div>
+					</div>
+					<span class="font-medium">{{
 						formatTime(hotelData.policy_info?.CheckInTime)
 					}}</span>
 				</div>
-				<div class="flex flex-col items-start gap-y-2">
-					<span class="text-gray-600">Check-out</span>
-					<span class="font-medium text-gray-900">{{
+				<div class="flex flex-col items-start gap-y-1">
+					<div class="flex items-center gap-x-2">
+						<p class="text-muted-foreground">Check-out</p>
+						<div class="rounded-sm bg-red-100 p-1">
+							<ArrowLeftIcon class="text-red-700" />
+						</div>
+					</div>
+					<span class="font-medium">{{
 						formatTime(hotelData.policy_info?.CheckOutTime)
 					}}</span>
 				</div>
 			</div>
-			<h2
-				class="text-gray-90 mt-4 mb-6 border-t border-gray-200 pt-4 text-xl font-semibold"
-			>
-				Facilities
-			</h2>
-			<div class="grid grid-cols-3 gap-6">
-				<div
-					v-for="amenity in showAllAmenities
-						? hotelData.amenities
-						: hotelData.amenities?.slice(0, 6)"
-					:key="amenity.id"
-					class="flex items-center gap-3"
-				>
-					<CheckIcon class="text-primary size-4" />
-					<span class="text-gray-700">{{ amenity.name }}</span>
+			<div class="border-t pt-6">
+				<h2 class="mb-6 text-lg font-semibold text-gray-900 md:text-xl">
+					Facilities
+				</h2>
+				<div class="grid grid-cols-2 gap-2 md:grid-cols-3">
+					<div
+						v-for="amenity in showAllAmenities
+							? hotelData.amenities
+							: hotelData.amenities?.slice(0, 6)"
+						:key="amenity.id"
+						class="flex items-center gap-x-1.5"
+					>
+						<CheckIcon class="text-primary size-4" />
+						<span class="text-gray-700">{{ amenity.name }}</span>
+					</div>
 				</div>
+				<Button
+					variant="ghost"
+					v-if="hotelData.amenities?.length > 6"
+					@click="toggleAmenities"
+					class="mt-2 !bg-transparent !p-0 !text-gray-800 underline"
+				>
+					{{ showAllAmenities ? "Show Less" : `View All Amenities` }}
+				</Button>
 			</div>
-			<Button
-				variant="ghost"
-				v-if="hotelData.amenities?.length > 6"
-				@click="toggleAmenities"
-			>
-				{{ showAllAmenities ? "Show Less" : `View All Amenities` }}
-			</Button>
 		</div>
 	</div>
 </template>
@@ -110,6 +121,8 @@ import {
 	CheckIcon,
 	MapPinIcon,
 	ChevronDownIcon,
+	ArrowRightIcon,
+	ArrowLeftIcon,
 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 

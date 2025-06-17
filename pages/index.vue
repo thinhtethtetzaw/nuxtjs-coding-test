@@ -1,15 +1,25 @@
 <template>
 	<section class="py-4 md:py-8">
-		<div
-			v-if="showStickyForm"
-			class="fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all md:hidden"
+		<Transition
+			name="sticky-form"
+			enter-active-class="transition-all duration-300 ease-out"
+			leave-active-class="transition-all duration-300 ease-in"
+			enter-from-class="transform -translate-y-full opacity-0"
+			enter-to-class="transform translate-y-0 opacity-100"
+			leave-from-class="transform translate-y-0 opacity-100"
+			leave-to-class="transform -translate-y-full opacity-0"
 		>
-			<FilterHotelSearchBar
-				:fullWidth="true"
-				@search-hotels="customSearchHotels"
-				@clear-search="getAllHotels"
-			/>
-		</div>
+			<div
+				v-if="showStickyForm"
+				class="fixed top-0 left-0 z-50 hidden w-full bg-white shadow-lg md:block"
+			>
+				<FilterHotelSearchBar
+					:fullWidth="true"
+					@search-hotels="customSearchHotels"
+					@clear-search="getAllHotels"
+				/>
+			</div>
+		</Transition>
 
 		<div
 			class="relative container mx-auto hidden max-w-7xl px-12 md:block lg:px-8 xl:px-0"
@@ -50,16 +60,34 @@
 
 		<!-- Hotel List -->
 		<div
-			class="container mx-auto grid max-w-7xl grid-cols-12 gap-4 px-12 md:mt-28 lg:gap-8 lg:px-8 xl:mt-36 xl:grid-cols-13 xl:gap-12 xl:px-0"
+			class="container mx-auto mt-10 grid max-w-7xl grid-cols-12 gap-4 px-12 md:mt-28 lg:gap-8 lg:px-8 xl:mt-36 xl:grid-cols-13 xl:gap-12 xl:px-0"
 		>
-			<div class="col-span-12 flex items-center justify-between lg:col-span-4">
-				<div class="block bg-red-500 md:hidden">Hello</div>
-				<Filter
-					:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"
-					:filters="filters"
-					@update:filters="filters = $event"
-					:available-amenities="availableAmenities"
-				/>
+			<div
+				class="col-span-12 flex justify-between gap-2 md:block md:items-center lg:col-span-4"
+			>
+				<div
+					class="fixed top-0 left-0 z-50 flex w-full items-center gap-2 bg-white px-4 py-3 shadow-sm md:hidden"
+				>
+					<FilterHotelSearchBar
+						:fullWidth="false"
+						@search-hotels="customSearchHotels"
+						@clear-search="getAllHotels"
+					/>
+					<Filter
+						:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"
+						:filters="filters"
+						@update:filters="filters = $event"
+						:available-amenities="availableAmenities"
+					/>
+				</div>
+				<div class="hidden md:block">
+					<Filter
+						:is-hotels-loading="isGetAllHotelsLoading || isCustomSearchLoading"
+						:filters="filters"
+						@update:filters="filters = $event"
+						:available-amenities="availableAmenities"
+					/>
+				</div>
 			</div>
 			<div class="col-span-12 lg:col-span-8 xl:col-span-9">
 				<div
@@ -121,18 +149,7 @@ const filters = ref({
 	selectedAmenities: [],
 })
 
-const {
-	data: customSearchData,
-	loading: isCustomSearchLoading,
-	searchHotels,
-} = useCustomHotelSearch()
-
-const {
-	data: allHotelsData,
-	loading: isGetAllHotelsLoading,
-	getAllHotels,
-} = useGetAllHotels()
-
+// Determine if there are custom search params
 const defaultParams = {
 	search: null,
 	check_in: new Date().toISOString().split("T")[0],
@@ -141,24 +158,46 @@ const defaultParams = {
 	rooms: 1,
 }
 
-const hasCustomParams = computed(() => {
-	const currentParams = {
-		search: getParam("search"),
-		check_in: getParam("check_in") || defaultParams.check_in,
-		check_out: getParam("check_out") || defaultParams.check_out,
-		adults: Number(getParam("adults")) || defaultParams.adults,
-		rooms: Number(getParam("rooms")) || defaultParams.rooms,
-	}
+const currentParams = {
+	search: getParam("search"),
+	check_in: getParam("check_in") || defaultParams.check_in,
+	check_out: getParam("check_out") || defaultParams.check_out,
+	adults: Number(getParam("adults")) || defaultParams.adults,
+	rooms: Number(getParam("rooms")) || defaultParams.rooms,
+}
 
+const hasCustomParams = computed(() => {
 	if (!currentParams.search) {
 		return !Object.keys(defaultParams).every((key) => {
 			if (key === "search") return true
 			return currentParams[key]?.toString() === defaultParams[key]?.toString()
 		})
 	}
-
 	return true
 })
+
+// SSR fetch for initial data if custom params exist
+const { data: ssrCustomSearchData } = hasCustomParams.value
+	? useFetch("/api/hotels/custom-search", {
+			method: "POST",
+			body: { search: currentParams.search },
+			default: () => null,
+			transform: (response) => response,
+		})
+	: { data: ref(null) }
+
+// Hydrate composable with SSR data
+const {
+	data: customSearchData,
+	loading: isCustomSearchLoading,
+	searchHotels,
+} = useCustomHotelSearch(ssrCustomSearchData?.value)
+
+const {
+	data: allHotelsData,
+	loading: isGetAllHotelsLoading,
+	getAllHotels,
+} = useGetAllHotels()
 
 const availableAmenities = computed(() => {
 	if (!hotels.value?.data) return []
@@ -194,7 +233,12 @@ onMounted(async () => {
 	window.addEventListener("scroll", handleScroll)
 
 	if (hasCustomParams.value) {
-		await customSearchHotels()
+		// Use SSR data if available, otherwise fetch
+		if (customSearchData.value && customSearchData.value.data) {
+			hotels.value = customSearchData.value
+		} else {
+			await customSearchHotels()
+		}
 	} else {
 		await getAllHotelsHandler()
 	}

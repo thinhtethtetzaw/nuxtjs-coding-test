@@ -5,7 +5,7 @@
 			<NuxtImg
 				:src="images?.[0]?.url || '/placeholder-room.jpg'"
 				:alt="roomName"
-				class="h-48 w-full rounded-lg object-cover"
+				class="aspect-video w-full rounded-lg object-cover"
 			/>
 		</div>
 
@@ -13,14 +13,14 @@
 			<NuxtImg
 				:src="images[1]?.url"
 				:alt="`${roomName} - Image 2`"
-				class="h-24 w-full rounded-lg object-cover"
+				class="aspect-video w-full rounded-lg object-cover"
 			/>
 
 			<div class="relative">
 				<NuxtImg
 					:src="images[2]?.url || images[1]?.url"
 					:alt="`${roomName} - Image 3`"
-					class="h-24 w-full rounded-lg object-cover"
+					class="aspect-video w-full rounded-lg object-cover"
 				/>
 				<div
 					v-if="images.length > 3"

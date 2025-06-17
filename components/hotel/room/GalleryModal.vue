@@ -10,15 +10,15 @@
 	>
 		<div
 			v-if="isOpen"
-			class="fixed inset-0 z-50 origin-center transform bg-white px-20 py-10"
+			class="fixed inset-0 z-50 origin-center transform bg-white px-4 py-10"
 		>
-			<div class="flex h-full flex-col">
+			<div class="container mx-auto flex h-full max-w-7xl flex-col">
 				<div class="animate-slide-up flex items-center justify-between">
 					<div class="text-gray-700">
 						<h2 class="text-2xl font-semibold">{{ room.room_type }}</h2>
 						<p class="text-gray-500">{{ images?.length || 0 }} Photos</p>
 					</div>
-					<Button variant="ghost" @click="$emit('close')" class="!p-0">
+					<Button variant="ghost" size="icon" @click="$emit('close')">
 						<XIcon class="size-5 text-gray-700" />
 					</Button>
 				</div>
@@ -88,7 +88,7 @@
 
 						<!-- Room Details -->
 						<div
-							class="animate-slide-up space-y-6 rounded-xl bg-white/50 backdrop-blur-sm"
+							class="animate-slide-up mt-4 space-y-6 rounded-xl bg-white/50 backdrop-blur-sm"
 						>
 							<div>
 								<h3 class="mb-2 text-xl font-semibold text-gray-900">

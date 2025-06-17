@@ -21,7 +21,7 @@
 				<strong>{{ maxOccupancy }} guests</strong>, but your search is for
 				<strong>{{ totalGuests }} guests</strong>.
 			</p>
-			<div v-if="exceededInfo" class="mt-2 text-xs text-red-500">
+			<div v-if="exceededInfo" class="mt-2 text-red-500">
 				<div v-if="exceededInfo.adult_exceeded > 0">
 					Adults exceeded by: {{ exceededInfo.adult_exceeded }}
 				</div>

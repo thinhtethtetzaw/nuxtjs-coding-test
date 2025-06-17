@@ -7,6 +7,7 @@
 				search: hotel.hotel_name,
 			},
 		}"
+		target="_blank"
 		class="flex flex-col gap-y-4 overflow-hidden"
 	>
 		<div>

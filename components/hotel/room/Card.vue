@@ -1,14 +1,14 @@
 <template>
-	<div class="grid grid-cols-12 gap-4 py-4">
+	<div class="grid grid-cols-12 gap-4">
 		<!-- Left: Image and Room Info -->
-		<div class="col-span-5 flex flex-col gap-y-6">
+		<div class="col-span-12 flex flex-col gap-y-6 md:col-span-5">
 			<HotelRoomGallery
 				:images="room.gallery"
 				:room-name="room.room_type"
 				@open-gallery="toggleRoomGallery"
 			/>
 			<div class="flex-1 space-y-4">
-				<h4 class="mb-3 text-xl font-semibold text-gray-900">
+				<h4 class="mb-3 text-lg font-semibold text-gray-900 md:text-xl">
 					{{ room.room_type }}
 				</h4>
 				<div class="flex flex-col items-start">
@@ -34,7 +34,7 @@
 						v-if="room.amenities?.length > 2"
 						@click="toggleRoomGallery"
 						variant="ghost"
-						class="p-0 underline"
+						class="!bg-transparent !p-0 underline"
 					>
 						View all amenities
 					</Button>
@@ -42,27 +42,27 @@
 			</div>
 		</div>
 		<!-- Right: Rate Plans -->
-		<div class="col-span-7 space-y-3">
+		<div class="col-span-12 space-y-3 md:col-span-7">
 			<div
 				v-for="(ratePlan, planIndex) in room.rate_plans?.slice(0, 2)"
 				:key="ratePlan.id"
-				class="rounded-lg border border-gray-200 p-4 transition-colors hover:border-gray-300"
+				class="flex flex-col gap-y-3 rounded-lg border border-gray-200 p-4 transition-colors hover:border-gray-300"
 			>
-				<div class="mb-3 flex items-start justify-between">
-					<span class="font-medium text-gray-900">
+				<div class="flex items-start justify-between gap-2">
+					<span class="font-semibold md:text-lg">
 						{{ ratePlan.rate_plan_name }}
 					</span>
 					<div class="text-right">
-						<span class="text-xl font-semibold text-gray-900">
+						<span class="font-semibold md:text-lg">
 							{{ ratePlan.pivot?.head_currency_code }}
 							{{ ratePlan.pivot?.price }}
 						</span>
 						<p class="text-xs text-gray-500">per night for 1 room</p>
 					</div>
 				</div>
-				<div class="mb-3">
+				<div class="">
 					<p class="mb-2 text-sm font-medium text-gray-700">Inclusions</p>
-					<div class="space-y-1">
+					<div class="space-y-0.5">
 						<div
 							v-if="ratePlan.include_breakfast"
 							class="flex items-center gap-2 text-xs text-gray-600"
@@ -106,6 +106,7 @@
 				</Button>
 			</div>
 		</div>
+
 		<HotelRoomGalleryModal
 			:is-open="isRoomGalleryOpen"
 			:images="room.gallery"

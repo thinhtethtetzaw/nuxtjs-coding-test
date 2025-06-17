@@ -19,18 +19,18 @@
 					</div>
 					<div class="flex flex-col lg:gap-1">
 						<p class="text-xs font-semibold text-gray-900 lg:text-sm">Where</p>
-						<div class="relative">
+						<div class="relative space-x-2">
 							<Input
 								v-model="search"
 								type="text"
 								placeholder="Search destinations"
 								@input="onInputChange"
 								@keydown.enter.prevent="onSearchSubmit"
-								class="!md:text-xs h-auto border-none bg-transparent text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0 md:px-0 lg:text-sm"
+								class="h-auto max-w-[120px] border-none bg-transparent !text-xs text-gray-500 placeholder-gray-400 shadow-none focus-visible:ring-0 md:px-0 lg:!text-sm"
 							/>
 							<XIcon
 								v-if="search"
-								class="absolute top-1/2 -right-3 size-4 -translate-y-1/2 cursor-pointer text-gray-500"
+								class="absolute top-1/2 -right-5 mt-px size-4 -translate-y-1/2 cursor-pointer text-gray-500 lg:-right-10"
 								@click="onClearSearch"
 							/>
 						</div>
@@ -244,6 +244,269 @@
 			</Button>
 		</div>
 	</div>
+
+	<Popover v-model:open="showMobileSearchBar" onOpen>
+		<PopoverTrigger as-child>
+			<div
+				class="grid h-9 w-full grid-cols-12 items-center divide-x divide-gray-200 rounded-full border border-gray-200 bg-white px-2 md:hidden"
+			>
+				<div class="col-span-4 flex items-center gap-1">
+					<MapPinIcon class="size-4 shrink-0" />
+					<p
+						class="truncate text-xs font-medium text-gray-900"
+						:class="fullWidth ? 'max-w-16 min-w-16' : 'max-w-16 min-w-16'"
+					>
+						{{ search || "Where" }}
+					</p>
+				</div>
+				<div class="col-span-4 flex items-center justify-center gap-1">
+					<p class="text-xs font-medium text-gray-900">
+						{{ dayjs(checkInDate).format("DD MMM") || "Check in" }}
+					</p>
+					<p class="text-xs font-medium text-gray-900">•</p>
+					<p class="text-xs font-medium text-gray-900">
+						{{ dayjs(checkOutDate).format("DD MMM") || "Check out" }}
+					</p>
+				</div>
+				<div class="col-span-4 flex items-center justify-center gap-1">
+					<p class="text-xs font-medium text-gray-900">
+						{{ adults + children }} Guest{{ adults + children > 1 ? "s" : "" }}
+					</p>
+					<p class="text-xs font-medium text-gray-900">•</p>
+					<p class="text-xs font-medium text-gray-900">
+						{{ rooms }} Room{{ rooms > 1 ? "s" : "" }}
+					</p>
+				</div>
+			</div>
+		</PopoverTrigger>
+		<PopoverContent
+			align="center"
+			:side-offset="10"
+			class="mx-auto flex h-[calc(100vh-64px)] w-screen flex-col space-y-4 rounded-2xl p-4 px-6 shadow-xl"
+		>
+			<div class="flex items-center justify-end">
+				<button
+					@click="showMobileSearchBar = false"
+					class="rounded-full p-2 hover:bg-gray-100"
+				>
+					<XIcon class="h-6 w-6" />
+				</button>
+			</div>
+
+			<Popover v-model:open="showMobileSearchResults">
+				<PopoverTrigger as-child>
+					<div
+						class="col-span-4 flex cursor-pointer items-center gap-2 py-2 lg:gap-4"
+					>
+						<div class="flex w-full flex-col gap-2">
+							<p class="text-sm font-semibold text-gray-900">Where</p>
+							<div class="relative">
+								<Input
+									v-model="search"
+									type="text"
+									placeholder="Search destinations"
+									@input="onMobileInputChange"
+									@keydown.enter.prevent="onMobileSearch"
+									class="!text-sm"
+								/>
+							</div>
+						</div>
+					</div>
+				</PopoverTrigger>
+				<PopoverContent
+					v-if="
+						search &&
+						searchResults &&
+						searchResults.data &&
+						Number(searchResults.data.length ?? 0) > 0 &&
+						!isLoading
+					"
+					class="max-h-68 min-h-16 w-full overflow-y-auto p-0"
+					align="start"
+					:side-offset="0"
+				>
+					<div
+						v-for="result in searchResults?.data"
+						:key="result.id || result.slug"
+						class="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 last:border-b-0 hover:bg-blue-50"
+						@click="onSelect(result)"
+					>
+						<div>
+							<p class="text-sm font-medium text-gray-900 lg:text-sm">
+								{{ result.hotel_name }}
+							</p>
+							<p
+								v-if="result.city_name || result.country_name"
+								class="text-xs text-gray-500 lg:text-sm"
+							>
+								{{ result.city_name }} {{ result.country_name }}
+							</p>
+						</div>
+					</div>
+				</PopoverContent>
+			</Popover>
+
+			<div class="grid grid-cols-2 gap-2">
+				<!-- Check In Field -->
+				<Popover v-model:open="showMobileCheckInCalendar">
+					<PopoverTrigger as-child>
+						<div class="flex w-full flex-col gap-2">
+							<p class="text-sm font-semibold text-gray-900 lg:text-sm">
+								Check in
+							</p>
+							<div class="border-input rounded-md border px-4 py-2 shadow-xs">
+								<div class="text-sm text-gray-900" v-if="checkInDate">
+									{{ dayjs(checkInDate).format("YYYY-MM-DD") }}
+								</div>
+								<div v-else class="text-sm text-gray-900">Add dates</div>
+							</div>
+						</div>
+					</PopoverTrigger>
+					<PopoverContent class="w-auto p-0" align="start">
+						<Calendar
+							v-model="calendarCheckInDate"
+							mode="single"
+							:min="today"
+							required
+						/>
+					</PopoverContent>
+				</Popover>
+
+				<!-- Check Out Field -->
+				<Popover v-model:open="showMobileCheckOutCalendar">
+					<PopoverTrigger as-child>
+						<div class="flex w-full flex-col gap-2">
+							<p class="text-sm font-semibold text-gray-900 lg:text-sm">
+								Check out
+							</p>
+							<div class="border-input rounded-md border px-4 py-2 shadow-xs">
+								<div class="text-sm text-gray-900" v-if="checkOutDate">
+									{{ dayjs(checkOutDate).format("YYYY-MM-DD") }}
+								</div>
+								<div v-else class="text-sm text-gray-900">Add dates</div>
+							</div>
+						</div>
+					</PopoverTrigger>
+					<PopoverContent class="w-auto p-0" align="start">
+						<Calendar
+							v-model="calendarCheckOutDate"
+							mode="single"
+							:min="minCheckOutDate"
+							required
+						/>
+					</PopoverContent>
+				</Popover>
+			</div>
+
+			<Popover v-model:open="showMobileGuestSelector">
+				<PopoverTrigger as-child>
+					<div class="flex w-full flex-col gap-2">
+						<p class="text-sm font-semibold text-gray-900 lg:text-sm">
+							Room & Guests
+						</p>
+						<div class="border-input rounded-md border px-4 py-2 shadow-xs">
+							<div
+								class="text-sm text-gray-900"
+								v-if="adults + children + rooms > 0"
+							>
+								{{ adults + children }} Guest{{
+									adults + children > 1 ? "s" : ""
+								}}
+								<span class="text-gray-900">• </span>
+								<span class="font-medium">{{ rooms }}</span>
+								<span class="text-gray-900">
+									Room{{ rooms > 1 ? "s" : "" }}</span
+								>
+							</div>
+							<div v-else class="text-sm text-gray-900">Add here</div>
+						</div>
+					</div>
+				</PopoverTrigger>
+				<PopoverContent class="w-80" align="start">
+					<div>
+						<div class="space-y-4 divide-y divide-gray-100">
+							<div class="space-y-2 py-2">
+								<p class="text-sm text-gray-500">Number of room needed</p>
+								<CommonCounter v-model="rooms" label="Room" :min="1" />
+							</div>
+
+							<div class="space-y-2 py-2">
+								<p class="text-sm text-gray-500">Ages 18 or above</p>
+								<CommonCounter v-model="adults" label="Adult" :min="1" />
+							</div>
+
+							<div class="space-y-2 py-2">
+								<p class="text-sm text-gray-500">Ages 8-14</p>
+								<CommonCounter v-model="children" label="Children" :min="0" />
+							</div>
+
+							<div v-if="children > 0">
+								<div class="mb-3">
+									<span class="text-sm font-medium text-gray-900"
+										>Child Ages</span
+									>
+									<p class="mt-1 text-xs text-gray-500">
+										Required for accurate pricing
+									</p>
+								</div>
+								<div class="space-y-2 pb-4">
+									<div
+										v-for="(_, index) in childrenAges"
+										:key="index"
+										class="relative"
+									>
+										<select
+											v-model="childrenAges[index]"
+											@change="updateAgeOfChildren"
+											class="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 pr-8 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+										>
+											<option value="" disabled class="text-gray-400">
+												Child {{ index + 1 }} age
+											</option>
+											<option value="0" class="text-gray-900">
+												Less than 1 year
+											</option>
+											<option
+												v-for="age in 17"
+												:key="age"
+												:value="age"
+												class="text-gray-900"
+											>
+												{{ age }} years old
+											</option>
+										</select>
+										<div
+											class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+										>
+											<ChevronDownIcon class="h-4 w-4 text-gray-400" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<Button
+							type="button"
+							@click="onGuestSelectorDone"
+							class="w-full !bg-gray-800"
+						>
+							Done
+						</Button>
+					</div>
+				</PopoverContent>
+			</Popover>
+
+			<div class="flex items-center justify-end">
+				<Button
+					@click="onMobileSearchSubmit"
+					class="w-full cursor-pointer rounded-md text-white lg:size-12 lg:rounded-xl xl:size-14"
+				>
+					<SearchIcon class="size-5 lg:size-6" />
+					Search
+				</Button>
+			</div>
+		</PopoverContent>
+	</Popover>
 </template>
 
 <script setup lang="ts">
@@ -262,6 +525,7 @@ import { useDebounceFn } from "@vueuse/core"
 import { createUrlParamComputed, createDateParamComputed } from "~/utils"
 import { parseDate } from "@internationalized/date"
 import { useHotelSearch } from "~/composables/useHotelSearch"
+import { watch } from "vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -288,9 +552,14 @@ const search = ref(getParam("search") || "")
 const childrenAges = ref<string[]>([])
 
 const showSearchResults = ref(false)
+const showMobileSearchResults = ref(false)
 const showCheckInCalendar = ref(false)
 const showCheckOutCalendar = ref(false)
 const showGuestSelector = ref(false)
+const showMobileSearchBar = ref(false)
+const showMobileCheckInCalendar = ref(false)
+const showMobileCheckOutCalendar = ref(false)
+const showMobileGuestSelector = ref(false)
 
 const searchBody = computed(() => {
 	const search = getParam("search") as string | null
@@ -306,6 +575,11 @@ const {
 const debouncedExecute = useDebounceFn(() => {
 	executeSearch(searchBody.value)
 	showSearchResults.value = true
+}, 1000)
+
+const debouncedMobileExecute = useDebounceFn(() => {
+	executeSearch(searchBody.value)
+	showMobileSearchResults.value = true
 }, 1000)
 
 watch(
@@ -328,9 +602,26 @@ const onInputChange = (e: Event) => {
 	debouncedExecute()
 }
 
+const onMobileInputChange = (e: Event) => {
+	const target = e.target as HTMLInputElement
+	search.value = target.value
+	setParam("search", target.value)
+	debouncedMobileExecute()
+}
+
 const onSearchSubmit = () => {
 	executeSearch(searchBody.value)
 	showSearchResults.value = true
+}
+
+const onMobileSearch = () => {
+	executeSearch(searchBody.value)
+	showMobileSearchResults.value = true
+}
+
+const onMobileSearchSubmit = () => {
+	emit("search-hotels")
+	showMobileSearchBar.value = false
 }
 
 const onSelect = (result: any) => {
@@ -482,4 +773,12 @@ watch(
 	},
 	{ immediate: true, deep: true },
 )
+
+watch(showMobileSearchBar, (val) => {
+	if (val) {
+		document.body.classList.add("overflow-hidden")
+	} else {
+		document.body.classList.remove("overflow-hidden")
+	}
+})
 </script>

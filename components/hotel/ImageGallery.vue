@@ -1,8 +1,10 @@
 <template>
 	<div class="rounded-2xl bg-white">
-		<div class="flex h-[400px] gap-3">
+		<div class="flex gap-3">
 			<!-- Main Image -->
-			<div class="group relative flex-1 overflow-hidden rounded-xl">
+			<div
+				class="group relative aspect-square flex-1 overflow-hidden rounded-xl md:aspect-video"
+			>
 				<NuxtImg
 					:src="images?.[0]?.url || '/placeholder-hotel.jpg'"
 					:alt="hotelName"
@@ -16,7 +18,9 @@
 			<!-- Side Images -->
 			<div class="grid flex-1 grid-cols-2 gap-3">
 				<!-- First side image -->
-				<div class="group relative overflow-hidden rounded-xl">
+				<div
+					class="group relative aspect-square overflow-hidden rounded-xl md:aspect-video"
+				>
 					<NuxtImg
 						:src="images?.[1]?.url || '/placeholder-hotel.jpg'"
 						:alt="hotelName"
@@ -28,7 +32,9 @@
 				</div>
 
 				<!-- Second side image -->
-				<div class="group relative overflow-hidden rounded-xl">
+				<div
+					class="group relative aspect-square overflow-hidden rounded-xl md:aspect-video"
+				>
 					<NuxtImg
 						:src="images?.[2]?.url || '/placeholder-hotel.jpg'"
 						:alt="hotelName"
@@ -40,7 +46,9 @@
 				</div>
 
 				<!-- Third side image -->
-				<div class="group relative overflow-hidden rounded-xl">
+				<div
+					class="group relative aspect-square overflow-hidden rounded-xl md:aspect-video"
+				>
 					<NuxtImg
 						:src="images?.[3]?.url || '/placeholder-hotel.jpg'"
 						:alt="hotelName"
@@ -53,7 +61,7 @@
 
 				<!-- More Photos Overlay with 5th image background -->
 				<div
-					class="group relative cursor-pointer overflow-hidden rounded-xl"
+					class="group relative aspect-square cursor-pointer overflow-hidden rounded-xl md:aspect-video"
 					@click="$emit('openGallery')"
 				>
 					<!-- Background image (5th image) with low opacity -->
@@ -73,15 +81,15 @@
 							<div
 								class="transform text-center text-white transition-transform duration-300 group-hover:scale-105"
 							>
-								<div class="mb-2">
+								<div class="md:mb-2">
 									<span
-										class="text-4xl font-bold tracking-tight drop-shadow-lg"
+										class="text-lg font-bold tracking-tight drop-shadow-lg md:text-2xl lg:text-4xl"
 									>
 										+{{ Math.max(0, (images?.length || 0) - 4) }}
 									</span>
 								</div>
 								<p
-									class="font-semibold tracking-wide uppercase opacity-90 drop-shadow"
+									class="hidden text-xs font-semibold tracking-wide uppercase opacity-90 drop-shadow md:block md:text-sm"
 								>
 									More Photos
 								</p>

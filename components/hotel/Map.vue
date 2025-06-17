@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="latitude && longitude"
-		class="relative h-96 overflow-hidden rounded-xl border border-gray-200"
+		class="relative aspect-square w-full overflow-hidden rounded-xl border border-gray-200"
 	>
 		<!-- Google Maps Embed -->
 		<iframe
@@ -14,26 +14,8 @@
 		>
 		</iframe>
 
-		<!-- Modern Map Controls -->
-		<div class="absolute bottom-6 left-6 z-40">
-			<div class="flex flex-col gap-2">
-				<!-- Zoom In -->
-				<button
-					class="flex size-8 items-center justify-center rounded-lg border border-gray-200/50 bg-white/90 shadow-lg backdrop-blur-sm transition-colors duration-200 hover:bg-white"
-				>
-					<PlusIcon class="size-4 text-gray-700" />
-				</button>
-				<!-- Zoom Out -->
-				<button
-					class="flex size-8 items-center justify-center rounded-lg border border-gray-200/50 bg-white/90 shadow-lg backdrop-blur-sm transition-colors duration-200 hover:bg-white"
-				>
-					<MinusIcon class="size-4 text-gray-700" />
-				</button>
-			</div>
-		</div>
-
 		<!-- Map Type Toggle -->
-		<div class="absolute right-6 bottom-6 z-40">
+		<div class="absolute bottom-6 left-4 z-40">
 			<button
 				@click="toggleMapType"
 				class="rounded-lg border border-gray-200/50 bg-white/90 px-3 py-2 text-xs font-medium text-gray-700 shadow-lg backdrop-blur-sm transition-colors duration-200 hover:bg-white"

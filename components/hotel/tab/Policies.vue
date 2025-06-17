@@ -6,12 +6,14 @@
 				<div
 					v-for="room in hotelData.rooms"
 					:key="room.id"
-					class="rounded-lg bg-gray-50 p-4"
+					class="bg-accent flex flex-col gap-1 rounded-2xl p-4"
 				>
-					<h5 class="mb-3 font-medium text-gray-900">{{ room.room_type }}</h5>
-					<p class="mb-1 font-medium text-gray-700">
-						<span class="font-bold">Penalty Description:</span>
-						{{ room.policy_info.penalty_description }}
+					<h5 class="font-semibold">{{ room.room_type }}</h5>
+					<p>
+						<span class="text-muted-foreground">Penalty Description: </span>
+						<span class="font-semibold">{{
+							room.policy_info.penalty_description
+						}}</span>
 					</p>
 				</div>
 			</div>

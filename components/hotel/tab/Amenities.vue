@@ -1,8 +1,8 @@
 <template>
 	<div class="grid gap-8 lg:grid-cols-2">
-		<div class="rounded-2xl bg-gray-50 p-4">
+		<div class="bg-accent rounded-2xl p-4">
 			<h4 class="mb-6 text-lg font-semibold text-gray-900">Hotel Facilities</h4>
-			<div class="space-y-3">
+			<div class="space-y-2">
 				<div
 					v-for="amenity in hotelData.amenities"
 					:key="amenity.id"
@@ -13,9 +13,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="rounded-2xl bg-gray-50 p-4">
+		<div class="bg-accent rounded-2xl p-4">
 			<h4 class="mb-6 text-lg font-semibold text-gray-900">Room Features</h4>
-			<div class="space-y-4">
+			<div class="space-y-2">
 				<div
 					v-for="amenity in hotelData.rooms?.[0]?.amenities"
 					:key="amenity.id"

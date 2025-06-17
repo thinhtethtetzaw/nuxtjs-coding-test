@@ -1,28 +1,31 @@
-import { ref } from "vue"
-
 /**
- * Custom composable to fetch all hotels via /api/hotels
- * @returns {Object} - { data, error, loading, getAllHotels }
+ * Custom composable to fetch all hotels via /api/hotels with SSR support
+ * @returns {Object} - { data, error, loading, getAllHotels, refresh }
  */
 export function useGetAllHotels() {
-	const data = ref<any>(null)
-	const error = ref<any>(null)
-	const loading = ref(false)
+	const {
+		data,
+		error,
+		pending: loading,
+		refresh,
+		execute,
+	} = useFetch("/api/hotels", {
+		method: "POST",
+		lazy: true,
+		default: () => null,
+		transform: (response: any) => response,
+	})
 
+	// Wrapper function to maintain backward compatibility
 	const getAllHotels = async () => {
-		loading.value = true
-		error.value = null
-		try {
-			const response = await $fetch("/api/hotels", {
-				method: "POST",
-			})
-			data.value = response
-		} catch (err) {
-			error.value = err
-		} finally {
-			loading.value = false
-		}
+		await execute()
 	}
 
-	return { data, error, loading, getAllHotels }
+	return {
+		data: readonly(data),
+		error: readonly(error),
+		loading: readonly(loading),
+		getAllHotels,
+		refresh, // Additional method for manual refresh
+	}
 }

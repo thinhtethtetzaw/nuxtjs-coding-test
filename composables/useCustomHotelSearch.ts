@@ -1,10 +1,12 @@
+import { readonly, ref } from "vue"
+
 /**
  * Custom composable to perform a custom hotel search via /api/hotels/custom-search
- * @param {string|null} search - The search query string
+ * @param {any} initialData - Optional initial data for SSR hydration
  * @returns {Object} - { data, error, loading, searchHotels }
  */
-export function useCustomHotelSearch() {
-	const data = ref<any>(null)
+export function useCustomHotelSearch(initialData: any = null) {
+	const data = ref<any>(initialData)
 	const error = ref<any>(null)
 	const loading = ref(false)
 
@@ -24,5 +26,10 @@ export function useCustomHotelSearch() {
 		}
 	}
 
-	return { data, error, loading, searchHotels }
+	return {
+		data: readonly(data),
+		error: readonly(error),
+		loading: readonly(loading),
+		searchHotels,
+	}
 }

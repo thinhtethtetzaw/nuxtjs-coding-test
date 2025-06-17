@@ -17,7 +17,16 @@
 			</div>
 
 			<div v-else class="divide-y divide-gray-200">
-				<HotelRoomCard v-for="room in roomsData" :key="room.id" :room="room" />
+				<template v-for="(room, index) in roomsData" :key="room.id">
+					<div
+						:class="{
+							'pt-4': index !== 0,
+							'pb-4': index !== roomsData.length - 1,
+						}"
+					>
+						<HotelRoomCard :room="room" />
+					</div>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -25,21 +34,26 @@
 
 <script setup>
 import { AlertTriangleIcon } from "lucide-vue-next"
-import { useGetRooms } from "~/composables/useGetRooms"
 
 const route = useRoute()
 const { getParam } = useUrlParams()
 
-const { data: rooms, error, loading: isRoomsLoading, getRooms } = useGetRooms()
-
-onMounted(() => {
-	getRooms(route.params.slug, {
+const {
+	data: rooms,
+	pending: isRoomsLoading,
+	error,
+} = useFetch(`/api/hotels/${route.params.slug}/rooms`, {
+	method: "POST",
+	lazy: false,
+	immediate: true,
+	body: {
 		check_in: getParam("check_in"),
 		check_out: getParam("check_out"),
 		rooms: getParam("rooms"),
 		adults: getParam("adults"),
 		age_of_children: getParam("age_of_children"),
-	})
+	},
+	$fetch: useNuxtApp().$api,
 })
 
 const roomsData = computed(() => rooms.value?.data?.rooms || [])

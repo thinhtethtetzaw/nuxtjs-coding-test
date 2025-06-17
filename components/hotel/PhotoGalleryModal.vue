@@ -10,15 +10,15 @@
 	>
 		<div
 			v-if="isOpen"
-			class="fixed inset-0 z-50 origin-center transform bg-white/90 px-20 py-10 backdrop-blur-sm"
+			class="fixed inset-0 z-50 origin-center transform bg-white/90 px-4 py-10 backdrop-blur-sm"
 		>
-			<div class="flex h-full flex-col">
+			<div class="container mx-auto flex h-full max-w-7xl flex-col">
 				<div class="animate-slide-up flex items-center justify-between">
 					<div class="text-gray-700">
 						<h2 class="text-2xl font-semibold">{{ hotelName }}</h2>
 						<p class="text-gray-500">{{ images?.length || 0 }} Photos</p>
 					</div>
-					<Button variant="ghost" @click="$emit('close')" class="!p-0">
+					<Button variant="ghost" size="icon" @click="$emit('close')">
 						<XIcon class="size-5 text-gray-700" />
 					</Button>
 				</div>
@@ -33,7 +33,7 @@
 							<div
 								v-for="(image, index) in images"
 								:key="index"
-								class="group animate-slide-up relative aspect-square overflow-hidden rounded-xl bg-gray-900 opacity-0 shadow-lg transition-all duration-300 hover:scale-105"
+								class="group animate-slide-up relative aspect-square overflow-hidden rounded-xl bg-gray-900 opacity-0 shadow-lg transition-all duration-300"
 								:style="{ 'animation-delay': `${index * 50}ms` }"
 							>
 								<NuxtImg

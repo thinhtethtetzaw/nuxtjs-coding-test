@@ -1,6 +1,8 @@
 <template>
 	<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-		<div class="relative flex border-b-2 border-gray-200">
+		<div
+			class="scrollbar-hide relative flex overflow-x-scroll border-b-2 border-gray-200"
+		>
 			<Button
 				v-for="tab in tabs"
 				:key="tab.key"
@@ -10,13 +12,13 @@
 					activeTab === tab.key
 						? 'border-primary relative -mb-0.5 bg-blue-50'
 						: 'hover:border-primary hover:!text-primary -mb-0.5 border-transparent !text-gray-600 hover:!bg-gray-50',
-					'rounded-none border-b-2 px-6 py-3 font-semibold transition-all duration-200',
+					'rounded-none border-b-2 p-6 font-semibold transition-all duration-200',
 				]"
 			>
 				{{ tab.label }}
 			</Button>
 		</div>
-		<div class="p-6">
+		<div class="p-4 lg:p-6">
 			<slot :active-tab="activeTab" />
 		</div>
 	</div>

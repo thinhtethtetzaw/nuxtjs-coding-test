@@ -1,5 +1,13 @@
 <template>
-	<div class="fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all">
+	<div
+		class="fixed top-0 left-0 z-50 hidden w-full bg-white shadow-lg transition-all md:block"
+	>
+		<FilterHotelSearchBar :fullWidth="true" @search-hotels="searchHotels" />
+	</div>
+
+	<div
+		class="fixed top-0 left-0 z-50 flex w-full items-center gap-2 bg-white px-4 py-3 shadow-sm md:hidden"
+	>
 		<FilterHotelSearchBar :fullWidth="true" @search-hotels="searchHotels" />
 	</div>
 	<div
@@ -9,26 +17,19 @@
 		<CommonSpinnerLoading :is-loading="true" />
 	</div>
 	<div v-else class="min-h-screen">
-		<NuxtLink
-			:to="{
-				path: '/',
-				query: route.query,
-			}"
-			class="mt-16 mb-5 flex items-center gap-2 text-base text-gray-700"
+		<div
+			v-if="hotelDetailData.hotel_name"
+			class="container mx-auto mt-20 max-w-7xl space-y-6 px-4 md:mt-20 lg:mt-24 xl:mt-30"
 		>
-			<ChevronLeftIcon class="size-5" /> Back to Hotels
-		</NuxtLink>
-
-		<div v-if="hotelDetailData.hotel_name" class="space-y-6">
 			<HotelImageGallery
 				:images="hotelDetailData.gallery_all"
 				:hotel-name="hotelDetailData.hotel_name"
 				@open-gallery="togglePhotoGallery"
 			/>
 
-			<div class="mt-10 grid grid-cols-12 gap-6">
+			<div class="grid grid-cols-12 gap-8 py-4 md:py-10">
 				<!-- Left Column -->
-				<div class="col-span-8 space-y-6">
+				<div class="col-span-12 space-y-6 lg:col-span-8">
 					<HotelDetailOverview :hotelData="hotelDetailData" />
 
 					<HotelTabWrapper
@@ -56,7 +57,9 @@
 				</div>
 
 				<!-- Right Column -->
-				<div class="sticky top-6 col-span-4 space-y-4 self-start">
+				<div
+					class="sticky top-6 col-span-12 space-y-4 self-start lg:col-span-4"
+				>
 					<HotelMap
 						:latitude="hotelDetailData.position?.latitude"
 						:longitude="hotelDetailData.position?.longitude"
@@ -73,12 +76,19 @@
 								Postal Code: {{ hotelDetailData.address?.[0]?.postalCode }}
 							</p>
 						</div>
-						<div class="flex w-full gap-2">
-							<Button variant="outline" @click="copyAddress" class="flex-1">
+						<div class="grid w-full grid-cols-2 gap-2">
+							<Button
+								variant="outline"
+								@click="copyAddress"
+								class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1"
+							>
 								<CopyIcon class="h-4 w-4 text-gray-700" />
 								Copy Address
 							</Button>
-							<Button @click="getDirections" class="flex-1">
+							<Button
+								@click="getDirections"
+								class="col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1"
+							>
 								<MapIcon class="h-4 w-4 text-white" />
 								Get Directions
 							</Button>
@@ -98,11 +108,9 @@
 </template>
 
 <script setup>
-import { ChevronLeftIcon, MapIcon, CopyIcon } from "lucide-vue-next"
+import { MapIcon, CopyIcon } from "lucide-vue-next"
 import { useUrlParams } from "~/composables/useUrlParams"
 import { Button } from "@/components/ui/button"
-import { useGetHotelDetail } from "~/composables/useGetHotelDetail"
-import { useGetAllHotels } from "~/composables/useGetAllHotels"
 
 const route = useRoute()
 const router = useRouter()
@@ -110,23 +118,18 @@ const { getParam } = useUrlParams()
 const isPhotoGalleryOpen = ref(false)
 const activeTab = ref("rooms")
 
+// SSR hotel detail fetch
 const {
-	data: hotel,
-	loading: isHotelDetailLoading,
-	getHotelDetail,
-} = useGetHotelDetail()
-
-const {
-	data: allHotelsData,
-	loading: isGetAllHotelsLoading,
-	getAllHotels,
-} = useGetAllHotels()
-
-onMounted(() => {
-	getHotelDetail(route.params.slug)
+	data: hotelDetail,
+	pending: isHotelDetailLoading,
+	error: hotelDetailError,
+} = await useFetch(`/api/hotels/${route.params.slug}`, {
+	method: "POST",
+	default: () => null,
+	transform: (response) => response,
 })
 
-const hotelDetailData = computed(() => hotel.value?.data || {})
+const hotelDetailData = computed(() => hotelDetail.value?.data || {})
 
 const getDirections = () => {
 	const lat = hotelDetailData.value.position?.latitude

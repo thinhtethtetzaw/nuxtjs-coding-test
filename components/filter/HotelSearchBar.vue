@@ -525,7 +525,6 @@ import { useDebounceFn } from "@vueuse/core"
 import { createUrlParamComputed, createDateParamComputed } from "~/lib/utils"
 import { parseDate } from "@internationalized/date"
 import { useHotelSearch } from "~/composables/useHotelSearch"
-import { watch } from "vue"
 
 const route = useRoute()
 const router = useRouter()

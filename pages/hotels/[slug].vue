@@ -185,6 +185,7 @@ const searchHotels = () => {
 			path: route.path,
 			query: route.query,
 		})
+		window.location.reload()
 	} else {
 		router.push({
 			path: "/",

@@ -17,36 +17,38 @@
 	</div>
 
 	<div class="flex justify-end lg:hidden">
-		<Drawer>
-			<DrawerTrigger v-if="!isHotelsLoading">
-				<Button
-					variant="outline"
-					class="md:border-input border-transparent shadow-none md:shadow-xs"
-				>
-					<SlidersHorizontalIcon class="size-4" />
-					<span class="hidden md:block">Filters</span>
-				</Button>
-			</DrawerTrigger>
-			<Skeleton v-else class="h-9 w-[42px] md:w-20" />
-			<DrawerContent>
-				<div class="scrollbar-hide mx-auto max-w-md overflow-auto py-4">
-					<div v-if="isHotelsLoading">
-						<CommonFilterSkeletonLoading />
+		<ClientOnly>
+			<Drawer>
+				<DrawerTrigger v-if="!isHotelsLoading">
+					<Button
+						variant="outline"
+						class="md:border-input border-transparent shadow-none md:shadow-xs"
+					>
+						<SlidersHorizontalIcon class="size-4" />
+						<span class="hidden md:block">Filters</span>
+					</Button>
+				</DrawerTrigger>
+				<Skeleton v-else class="h-9 w-[42px] md:w-20" />
+				<DrawerContent>
+					<div class="scrollbar-hide mx-auto max-w-md overflow-auto py-4">
+						<div v-if="isHotelsLoading">
+							<CommonFilterSkeletonLoading />
+						</div>
+						<div v-else class="flex flex-col gap-y-8">
+							<FilterPriceRange
+								:model-value="filters"
+								@update:model-value="updateFilters"
+							/>
+							<FilterAmenities
+								:model-value="filters.selectedAmenities"
+								@update:model-value="updateSelectedAmenities"
+								:amenities="availableAmenities"
+							/>
+						</div>
 					</div>
-					<div v-else class="flex flex-col gap-y-8">
-						<FilterPriceRange
-							:model-value="filters"
-							@update:model-value="updateFilters"
-						/>
-						<FilterAmenities
-							:model-value="filters.selectedAmenities"
-							@update:model-value="updateSelectedAmenities"
-							:amenities="availableAmenities"
-						/>
-					</div>
-				</div>
-			</DrawerContent>
-		</Drawer>
+				</DrawerContent>
+			</Drawer>
+		</ClientOnly>
 	</div>
 </template>
 

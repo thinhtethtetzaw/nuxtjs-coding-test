@@ -26,7 +26,7 @@ A modern hotel booking web application built with [Nuxt 3](https://nuxt.com/), f
 
 ## Tech Stack
 
-- **Frontend:** Nuxt 3, Vue 3, Tailwind CSS, shadcn-nuxt
+- **Frontend:** Nuxt 3, Tailwind CSS, shadcn-nuxt
 - **Backend/API:** Nuxt server routes (see `/server/api/`)
 - **State & Utilities:** Vue composables, VueUse, dayjs
 
@@ -35,7 +35,7 @@ A modern hotel booking web application built with [Nuxt 3](https://nuxt.com/), f
 ### Prerequisites
 
 - Node.js (v18+ recommended)
-- pnpm, npm, yarn, or bun
+- pnpm
 
 ### Installation
 

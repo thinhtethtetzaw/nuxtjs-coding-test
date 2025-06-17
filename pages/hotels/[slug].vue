@@ -119,15 +119,14 @@ const isPhotoGalleryOpen = ref(false)
 const activeTab = ref("rooms")
 
 // SSR hotel detail fetch
-const {
-	data: hotelDetail,
-	pending: isHotelDetailLoading,
-	error: hotelDetailError,
-} = await useFetch(`/api/hotels/${route.params.slug}`, {
-	method: "POST",
-	default: () => null,
-	transform: (response) => response,
-})
+const { data: hotelDetail, pending: isHotelDetailLoading } = await useFetch(
+	`/api/hotels/${route.params.slug}`,
+	{
+		method: "POST",
+		default: () => null,
+		transform: (response) => response,
+	},
+)
 
 const hotelDetailData = computed(() => hotelDetail.value?.data || {})
 

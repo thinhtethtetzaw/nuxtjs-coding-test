@@ -2,7 +2,7 @@
 	<div class="flex flex-col gap-y-8">
 		<!-- Price Range Filter Skeleton -->
 		<div class="space-y-5">
-			<Skeleton class="h-4 w-32" />
+			<Skeleton class="h-4 w-72 xl:w-80" />
 
 			<div class="grid grid-cols-2 gap-2">
 				<Skeleton class="h-12 w-full" />
@@ -12,7 +12,7 @@
 
 		<!-- Amenities Filter Skeleton -->
 		<div class="space-y-5">
-			<Skeleton class="h-4 w-32" />
+			<Skeleton class="h-4 w-72 xl:w-80" />
 
 			<div class="flex flex-col gap-2">
 				<Skeleton class="h-6 w-full" />

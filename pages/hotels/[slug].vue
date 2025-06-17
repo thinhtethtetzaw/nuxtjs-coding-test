@@ -71,7 +71,7 @@
 								Hotel Address
 							</p>
 							<p class="leading-relaxed text-gray-700">
-								{{ hotelDetailData.address?.[0]?.cityName }},
+								{{ hotelDetailData.address?.[0]?.cityName ?? +"," }}
 								{{ hotelDetailData.address?.[0]?.stateProv }}<br />
 								Postal Code: {{ hotelDetailData.address?.[0]?.postalCode }}
 							</p>
@@ -118,7 +118,6 @@ const { getParam } = useUrlParams()
 const isPhotoGalleryOpen = ref(false)
 const activeTab = ref("rooms")
 
-// SSR hotel detail fetch
 const { data: hotelDetail, pending: isHotelDetailLoading } = await useFetch(
 	`/api/hotels/${route.params.slug}`,
 	{
@@ -141,8 +140,18 @@ const getDirections = () => {
 
 const copyAddress = async () => {
 	const address = hotelDetailData.value.address?.[0]
-	if (address)
-		`${address.addressLine}, ${address.cityName}, ${address.stateProv}, ${address.postalCode}`
+	let fullAddress = ""
+	if (address) {
+		fullAddress = [
+			address.addressLine,
+			address.cityName,
+			address.stateProv,
+			address.postalCode,
+		]
+			.filter(Boolean)
+			.join(", ")
+	}
+	navigator.clipboard.writeText(fullAddress)
 }
 
 const togglePhotoGallery = () => {

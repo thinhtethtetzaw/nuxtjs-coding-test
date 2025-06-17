@@ -269,11 +269,11 @@
 					</p>
 				</div>
 				<div class="col-span-4 flex items-center justify-center gap-1">
-					<p class="text-xs font-medium text-gray-900">
+					<p class="max-w-8 min-w-8 truncate text-xs font-medium text-gray-900">
 						{{ adults + children }} Guest{{ adults + children > 1 ? "s" : "" }}
 					</p>
 					<p class="text-xs font-medium text-gray-900">•</p>
-					<p class="text-xs font-medium text-gray-900">
+					<p class="max-w-8 min-w-8 truncate text-xs font-medium text-gray-900">
 						{{ rooms }} Room{{ rooms > 1 ? "s" : "" }}
 					</p>
 				</div>

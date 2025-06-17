@@ -58,7 +58,7 @@
 
 				<!-- Right Column -->
 				<div
-					class="sticky top-6 col-span-12 space-y-4 self-start lg:col-span-4"
+					class="sticky top-28 col-span-12 space-y-4 self-start lg:col-span-4"
 				>
 					<HotelMap
 						:latitude="hotelDetailData.position?.latitude"

@@ -38,7 +38,6 @@
 </template>
 
 <script setup>
-import { PlusIcon, MinusIcon } from "lucide-vue-next"
 const props = defineProps({
 	latitude: {
 		type: [String, Number],
